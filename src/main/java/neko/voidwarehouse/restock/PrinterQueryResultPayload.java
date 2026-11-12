@@ -1,29 +1,35 @@
 package neko.voidwarehouse.restock;
 
-//#if MC >= 12111
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import neko.compat.ByteBufCodecs;
+import neko.compat.StreamCodec;
+import neko.compat.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 
 /**
  * 服务端 → 打印机：「你要的那批物品，仓库里各有多少」。
  *
- * <p><b>同样是 {@code carpet-Neko-Addition} 里那份的服务端原件在客户端的镜像</b>，
- * 与 {@link PrinterQueryPayload} 同理：包名、类名、状态码常量、{@code CODEC} 结构
- * 必须与服务端逐字节等价。</p>
+ * <p><b>同样是 litematica-printer 里那份镜像的服务端原件</b>，两份必须逐字节等价。</p>
+ *
+ * <h2>为什么把 id 也回显一遍（明明客户端刚发过）</h2>
+ * <p>回显让这个包<b>自解释</b>：{@code itemIds[i]} 对应的就是 {@code amounts[i]}，
+ * 不依赖「客户端还记得第 i 个问的是谁」。少写一份 id 能省几 KB，但一旦将来出现
+ * 「两个请求并发 / 响应乱序」这类问题，省下来的那点带宽完全不值。
+ * 更实际的理由：客户端只保留<b>最新一次</b>请求的上下文，回显让「拿旧响应去套新请求」
+ * 这种错配根本无从发生。</p>
  *
  * <h2>只回有货的物品</h2>
- * <p>仓库里没有的不占位置。「查不到 = 0」与「回一条 0」对使用方完全等价，
- * 而投影要的、仓库里没有的那部分往往占大多数，省下来的都是净赚。</p>
+ * <p>仓库里没有的（或数量为 0 的）不占位置。客户端查不到就是 0 —— 语义完全一样，
+ * 而一个几千格的仓库里「投影要的但没有」的那部分往往占大多数。</p>
  *
- * <h2>数量是 {@code long}</h2>
- * <p>仓库的账是任意精度，传输时饱和到 {@code long}。客户端拿到之后再饱和到
- * {@code int} 交给界面 —— 两层饱和各自独立，都是为了「宁可显示成大数，也绝不显示负数」。</p>
+ * <h2>数量为什么是 {@code long} 不是 {@code int}</h2>
+ * <p>仓库的账是 {@link java.math.BigInteger}，可以到天文数字。显示层面用不到那么细，
+ * 但也没必要在传输时先砍一刀 —— {@code long} 的 {@code VAR_LONG} 编码对小数几乎不占空间，
+ * 对一位数只是 1 个字节。<b>只有超过 {@code Long.MAX_VALUE} 才会饱和</b>，
+ * 那种量级已经远超任何真实玩法。</p>
  */
 public record PrinterQueryResultPayload(int nonce, int status, List<String> itemIds, List<Long> amounts)
         implements CustomPacketPayload {
@@ -31,7 +37,7 @@ public record PrinterQueryResultPayload(int nonce, int status, List<String> item
     /** 查询回执通道：{@code carpet_neko_addition:printer_query_result}（S2C）。 */
     public static final CustomPacketPayload.Type<PrinterQueryResultPayload> TYPE =
             new CustomPacketPayload.Type<>(
-                    Identifier.fromNamespaceAndPath("carpet_neko_addition", "printer_query_result"));
+                    new ResourceLocation("carpet_neko_addition", "printer_query_result"));
 
     /** 成功：{@code itemIds} / {@code amounts} 有效（可能为空 = 这些物品仓库里一个都没有） */
     public static final int OK = 0;
@@ -42,7 +48,12 @@ public record PrinterQueryResultPayload(int nonce, int status, List<String> item
     /** 撞上限流：客户端问得太快 */
     public static final int THROTTLED = 3;
 
-    /** 回执里最多多少条。必须 ≥ 请求侧的 {@link PrinterQueryPayload#MAX_IDS}。 */
+    /**
+     * 回执里最多多少条。
+     *
+     * <p>必须 ≥ 请求侧的 {@link PrinterQueryPayload#MAX_IDS}，否则「客户端问了个满清单、
+     * 服务端刚好全都有」时会在客户端的解码侧被截断报错。</p>
+     */
     public static final int MAX_ENTRIES = PrinterQueryPayload.MAX_IDS;
 
     private static final StreamCodec<ByteBuf, List<String>> IDS_CODEC =
@@ -69,4 +80,4 @@ public record PrinterQueryResultPayload(int nonce, int status, List<String> item
         return TYPE;
     }
 }
-//#endif
+

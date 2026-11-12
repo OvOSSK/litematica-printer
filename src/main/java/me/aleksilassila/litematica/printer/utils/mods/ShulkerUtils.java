@@ -8,7 +8,7 @@ import me.aleksilassila.litematica.printer.Reference;
 import me.aleksilassila.litematica.printer.utils.minecraft.MessageUtils;
 import net.kyrptonaught.quickshulker.client.ClientUtil;
 import net.minecraft.client.Minecraft;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 import me.aleksilassila.litematica.printer.integration.quickshulker.QuickShulkerClicks;
 import me.aleksilassila.litematica.printer.integration.quickshulker.ShulkerCursorRecovery;
@@ -38,7 +38,7 @@ public class ShulkerUtils {
             recoveryConnection = client.getConnection();
             requestedMenu = null;
             recoveryFence = null;
-            QuickShulkerClicks.send(client.player.containerMenu, shulkerBoxSlot, 1, ContainerInput.PICKUP);
+            QuickShulkerClicks.send(client.player.containerMenu, shulkerBoxSlot, 1, ClickType.PICKUP);
             return true;
         } else if (openMode == QuickShulkerModeType.INVOKE) {
             if (ModLoadUtils.isQuickShulkerLoaded()) {
@@ -110,7 +110,7 @@ public class ShulkerUtils {
         } else if (recovery.shouldReturn(menu.getCarried(), menu.slots.get(recovery.slot()).getItem())) {
             QuickShulkerDiagnostics.log("cursor-recovery slot=" + recovery.slot());
             recovery.markReturnSent();
-            QuickShulkerClicks.sendWithFullSync(menu, recovery.slot(), 0, ContainerInput.PICKUP);
+            QuickShulkerClicks.sendWithFullSync(menu, recovery.slot(), 0, ClickType.PICKUP);
             requestRecoveryFence();
         }
     }

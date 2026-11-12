@@ -2,9 +2,6 @@ package me.aleksilassila.litematica.printer.utils.minecraft;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.EntityType;
-//#if MC > 260100
-//$$ import net.minecraft.world.entity.EntityTypes;
-//#endif
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.NaturalSpawner;
 import net.minecraft.world.level.block.state.BlockState;
@@ -42,13 +39,8 @@ public final class SpawnCheckUtils {
         // Direct field references are remapped by Loom. Reflection by named field string is not,
         // which made the production 1.21.1 jar look for a non-existent "CREEPER" field.
         return switch (id) {
-            //#if MC > 260100
-            //$$ case "minecraft:creeper" -> EntityTypes.CREEPER;
-            //$$ case "minecraft:wither_skeleton" -> EntityTypes.WITHER_SKELETON;
-            //#else
             case "minecraft:creeper" -> EntityType.CREEPER;
             case "minecraft:wither_skeleton" -> EntityType.WITHER_SKELETON;
-            //#endif
             default -> throw new IllegalArgumentException("Unsupported entity type " + id);
         };
     }

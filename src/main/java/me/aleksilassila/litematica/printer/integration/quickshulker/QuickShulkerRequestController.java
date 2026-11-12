@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -146,18 +146,10 @@ public final class QuickShulkerRequestController {
         QuickShulkerDiagnostics.log("open-confirmed menu=" + containerId);
         // Only hide the screen after the server contents identify the expected box.
         // Removing this screen does not send a container-close packet (unlike onClose()).
-        //#if MC > 260100
-        //$$ var screen = client.gui.screen();
-        //#else
         var screen = client.screen;
-        //#endif
         if (screen instanceof net.minecraft.client.gui.screens.inventory.AbstractContainerScreen<?> container
                 && container.getMenu().containerId == containerId) {
-            //#if MC > 260100
-            //$$ client.gui.setScreen(null);
-            //#else
             client.setScreen(null);
-            //#endif
         }
         return true;
     }
@@ -313,7 +305,7 @@ public final class QuickShulkerRequestController {
                 + " source=" + source + " target=" + target + " hotbar=" + hotbar
                 + " sourceStack=" + QuickShulkerDiagnostics.stack(menu.slots.get(source).getItem())
                 + " targetStack=" + QuickShulkerDiagnostics.stack(menu.slots.get(target).getItem()));
-        QuickShulkerClicks.send(menu, source, hotbar, ContainerInput.SWAP);
+        QuickShulkerClicks.send(menu, source, hotbar, ClickType.SWAP);
     }
 
     public void onSlotUpdate(int containerId, int slot, ItemStack stack) {

@@ -1,0 +1,27 @@
+Litematica Printer Hana - Minecraft 1.20.1 Fabric community port
+Modified by OvOSSK, 2026-11-13.
+
+Upstream: https://github.com/Yur1Ca/litematica-printer
+Base: old branch, ea47a79f026b2af7becf7d1de0e724d7acdcf109
+Authors include aleksilassila, zhaixianyu, BlinkWhite, bunnyi116.
+Upstream history and source notices retain other contributors' authorship.
+License: GNU Affero General Public License version 3 (LICENSE.md).
+Port modifications are distributed under the same license.
+
+Corresponding source and build instructions:
+https://github.com/OvOSSK/litematica-printer/tree/fabric-1.20.1
+Each binary release includes its tagged complete source and source archive,
+including build scripts, tests and resources.
+
+Changes: standalone Java 17 / Gradle 8.5 / Loom 1.5.8 build; Minecraft
+1.20.1 registry, item NBT, GUI and interaction API adaptation; legacy Fabric
+networking; Hana warehouse restock, return, direct placement and material
+list backport; client session handling.
+
+Neko packet/compatibility code retains its MIT notice in
+src/main/resources/licenses/Neko-Carpet-Addition-MIT.txt and in the JAR.
+Third-party dependencies retain their respective licenses and notices.
+
+OvOSSK attribution covers porting and maintenance contributions only.
+It does not replace upstream authorship, claim exclusive ownership of
+upstream code/artwork/names, or imply upstream endorsement.

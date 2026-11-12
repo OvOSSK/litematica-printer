@@ -72,8 +72,8 @@ final class NestedShulkerReturn {
         for (int slot = 0; slot < size; slot++) {
             ItemStack candidate = player.getInventory().getItem(slot);
             boolean wasPresent = slot < before.size()
-                    && ItemStack.isSameItemSameComponents(before.get(slot), candidate);
-            if (!wasPresent && ItemStack.isSameItemSameComponents(candidate, snapshot)) {
+                    && ItemStack.isSameItemSameTags(before.get(slot), candidate);
+            if (!wasPresent && ItemStack.isSameItemSameTags(candidate, snapshot)) {
                 if (found >= 0) return -1;
                 found = slot;
             }

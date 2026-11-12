@@ -4,7 +4,7 @@ import fi.dy.masa.litematica.world.WorldSchematic;
 import me.aleksilassila.litematica.printer.printer.SchematicBlockContext;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,7 +12,7 @@ import java.util.Objects;
 
 public class GuiBlockInfo {
     public final ClientLevel level;
-    public final Identifier world;
+    public final ResourceLocation world;
     public final @Nullable WorldSchematic schematic;
     public final BlockPos pos;
     public final BlockState currentState;
@@ -24,7 +24,7 @@ public class GuiBlockInfo {
 
     public GuiBlockInfo(ClientLevel level, @Nullable WorldSchematic schematic, BlockPos pos) {
         this.level = level;
-        this.world = level.dimension().identifier();
+        this.world = level.dimension().location();
         this.schematic = schematic;
         this.pos = pos;
         this.currentState = level.getBlockState(pos);

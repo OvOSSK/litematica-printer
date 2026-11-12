@@ -16,7 +16,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.*;
@@ -170,11 +170,7 @@ public final class ContainerSyncController implements RuntimeComponent {
         candidate = -1; menu = null; phase = Phase.OPENING; requestedAt = now();
         openingInventoryRevision = client.player.inventoryMenu.getStateId();
         me.aleksilassila.litematica.printer.integration.quickshulker.QuickShulkerDiagnostics.log("container-sync open target=" + target);
-        //#if MC < 11904
-        //$$ client.gameMode.useItemOn(client.player, client.level, InteractionHand.MAIN_HAND,
-        //#else
         client.gameMode.useItemOn(client.player, InteractionHand.MAIN_HAND,
-        //#endif
                 new BlockHitResult(Vec3.atCenterOf(target), Direction.UP, target, false));
         // Ordered behind the open: rejection leaves menu 0 active and returns a full snapshot;
         // a successful open changes the server menu ID and ignores this menu-0 no-op.
@@ -310,7 +306,7 @@ public final class ContainerSyncController implements RuntimeComponent {
             public void release() { }
             public void click(int slot, int button) {
                 sentRevision = owned.getStateId();
-                QuickShulkerClicks.sendWithFullSync(owned, slot, button, ContainerInput.PICKUP);
+                QuickShulkerClicks.sendWithFullSync(owned, slot, button, ClickType.PICKUP);
             }
             public void refresh() { sentRevision = owned.getStateId(); QuickShulkerClicks.requestFullSync(owned); }
             public boolean unchanged(List<ItemStack> expected, ItemStack cursor) {

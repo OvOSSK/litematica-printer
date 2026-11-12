@@ -1,13 +1,12 @@
 package me.aleksilassila.litematica.printer.integration.voidwarehouse;
 
-//#if MC >= 12111
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
@@ -82,7 +81,7 @@ final class VoidWarehouseLedgerStore {
                 if (entry.getValue() == null || entry.getValue() <= 0) {
                     continue;
                 }
-                Identifier key = BuiltInRegistries.ITEM.getKey(entry.getKey());
+                ResourceLocation key = BuiltInRegistries.ITEM.getKey(entry.getKey());
                 if (key == null) {
                     continue;
                 }
@@ -160,12 +159,12 @@ final class VoidWarehouseLedgerStore {
     /** 注册表 id → 物品；解析不出来（换了版本/加了删了模组）就返回 {@code null}。 */
     static @Nullable Item itemOf(String id) {
         try {
-            Identifier key = Identifier.tryParse(id);
+            ResourceLocation key = ResourceLocation.tryParse(id);
             if (key == null) {
                 return null;
             }
             // 26.x 的 Registry#get 给的是 Optional<Reference<T>>，不是 T
-            Item item = BuiltInRegistries.ITEM.get(key).map(Holder.Reference::value).orElse(null);
+            Item item = BuiltInRegistries.ITEM.getOptional(key).orElse(null);
             return item == null || item == Items.AIR ? null : item;
         } catch (Exception ignored) {
             return null;
@@ -176,4 +175,3 @@ final class VoidWarehouseLedgerStore {
         return a == null ? b == null || b.isEmpty() : a.equals(b);
     }
 }
-//#endif

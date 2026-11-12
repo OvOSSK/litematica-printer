@@ -2,7 +2,7 @@
   "required": true,
   "minVersion": "0.8",
   "package": "me.aleksilassila.litematica.printer.mixin",
-  "compatibilityLevel": "${compatibility_level}",
+  "compatibilityLevel": "JAVA_17",
   "client": [
     "printer.malilib.MixinAbstractCraftingMenu",
     "printer.malilib.MixinGuiStringListEdit"

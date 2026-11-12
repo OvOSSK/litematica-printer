@@ -31,23 +31,14 @@ public class NetworkUtils {
         if (!(packet instanceof ServerboundUseItemOnPacket use)) return;
         UseItemOnSend scope = ACTIVE_USE_ITEM_ON.get();
         if (scope == null || scope.connection != connection) return;
-        //#if MC >= 260300
-        //$$ InteractionHand hand = use.hand();
-        //$$ BlockHitResult hit = use.hitResult();
-        //#else
         InteractionHand hand = use.getHand();
         BlockHitResult hit = use.getHitResult();
-        //#endif
         if (scope.hand == hand && scope.hit.getBlockPos().equals(hit.getBlockPos())
                 && scope.hit.getDirection() == hit.getDirection()
                 && scope.hit.getLocation().equals(hit.getLocation())
                 && scope.hit.isInside() == hit.isInside()) {
             scope.sent = true;
-            //#if MC >= 260300
-            //$$ scope.sequence = use.sequence();
-            //#elseif MC > 11802
             scope.sequence = use.getSequence();
-            //#endif
         }
     }
 
@@ -109,9 +100,6 @@ public class NetworkUtils {
                 lookYaw,
                 lookPitch,
                 playerEntity.onGround()
-                //#if MC > 12101
-                , playerEntity.horizontalCollision
-                //#endif
         ));
     }
 
@@ -136,9 +124,6 @@ public class NetworkUtils {
         try {
             BYPASS_QUEUED_LOOK_OVERRIDE.set(true);
             return new ServerboundMovePlayerPacket.Rot(look.yaw, look.pitch, player.onGround()
-                    //#if MC > 12101
-                    , player.horizontalCollision
-                    //#endif
             );
         } finally {
             BYPASS_QUEUED_LOOK_OVERRIDE.set(false);

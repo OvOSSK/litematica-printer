@@ -1,169 +1,25 @@
-# Litematica Printer — Hana
+# Litematica Printer Hana — Fabric 1.20.1
 
-**English** | [简体中文](README.zh-CN.md)
+由 **OvOSSK** 维护的 [Yur1Ca/litematica-printer（Hana）](https://github.com/Yur1Ca/litematica-printer) 社区移植版。基于 Hana old 分支的 1.20.1 代码，手动回移虚空仓库联动。本分支只构建 Minecraft 1.20.1。
 
-[![GitHub Actions](https://github.com/Yur1Ca/litematica-printer/actions/workflows/build.yml/badge.svg)](https://github.com/Yur1Ca/litematica-printer/actions/workflows/build.yml)
-[![Modrinth](https://img.shields.io/modrinth/dt/nriQwbvD?logo=modrinth&label=Modrinth)](https://modrinth.com/mod/litematica-printer-hana)
-[![GitHub release](https://img.shields.io/github/v/release/Yur1Ca/litematica-printer?include_prereleases&label=GitHub)](https://github.com/Yur1Ca/litematica-printer/releases)
-[![License](https://img.shields.io/github/license/Yur1Ca/litematica-printer)](LICENSE.md)
+## 安装
 
-Litematica Printer — Hana is a client-side Fabric mod that adds automated schematic building to Litematica. It restores a schematic by placing the correct blocks around the player and also provides filling, fluid removal, mining, bedrock breaking, inventory assistance, and related utilities.
+从 Releases 下载不含 sources 的 JAR，仅安装于 Fabric 1.20.1 客户端。移除其他同 ID 打印机 JAR，避免重复加载。
 
-This repository is an independently maintained continuation of earlier Litematica Printer forks, with a rewritten bedrock-breaking workflow, scanner and iterator improvements, and additional building features.
+需要 Java 17+、Fabric Loader 0.16.14+、1.20.1 Fabric API、MaLiLib 0.16.3、Litematica 0.15.4。仓库联动需要服务端安装 [Neko 主模组移植版](https://github.com/OvOSSK/Neko-Carpet-Addition)并启用相应规则。
 
-## Download and release channels
+投影菜单 → 打印机设置 → 特殊功能，可启用仓库补货、直接放置、余料回仓及材料列表统计。默认工作切换键为 Caps Lock。余料回仓保护当前手持材料：停止打印后切换手持槽位，可返还该槽位的仓库余料。
 
-- [Modrinth](https://modrinth.com/mod/litematica-printer-hana) provides the multi-version Wrapper JAR and is recommended when launcher or Mod Menu update detection is desired.
-- [GitHub Releases](https://github.com/Yur1Ca/litematica-printer/releases) also provides standalone JARs for individual Minecraft versions.
-- Automated `devXXX` builds are published as **Alpha** versions.
-- Manually created releases are published as **Beta** versions.
-- There is currently no stable release channel.
+## 构建与验证
 
-## Supported Minecraft versions
+Java 17，运行 `./gradlew build`（Windows：`gradlew.bat build`）。Gradle 8.5、Loom 1.5.8；所有源代码、资源、测试和构建脚本包含于仓库。可选兼容模组构建依赖见 build.gradle。
 
-- 1.18.2
-- 1.19.4
-- 1.20.1, 1.20.2, 1.20.4, and 1.20.6
-- 1.21 through 1.21.11
-- 26.1.x, 26.2 and 26.3
+50 项仓库材料与放置测试通过。实机验证了配置界面、材料库存查询、生存补货打印、余料回仓及仓库直接放置，四方块测试扣料正确。见 [验证记录](VALIDATION-2026-11-13.txt)。复杂方块、大型投影与远程多人环境尚未全面验证。
 
-Versions older than 1.18.2 are not supported. Intermediate Minecraft versions may work when they are covered by the same compatibility range, but are not always built as separate JARs.
+## 来源、修改与许可
 
-## Requirements
+保留 aleksilassila、zhaixianyu、BlinkWhite、bunnyi116 等上游贡献者署名。项目继续按 [GNU AGPL v3](LICENSE.md) 分发，移植修改采用相同许可。
 
-Required:
+修改包括 Java 17 独立构建、Minecraft/Fabric 旧 API 适配、网络编解码、Mixin 兼容和仓库联动回移。修改日期：2026-11-13。每个 Release 同时提供与二进制对应的完整源码及构建脚本。
 
-- [Fabric Loader](https://fabricmc.net/)
-- [Fabric API](https://modrinth.com/mod/fabric-api)
-- [MaLiLib](https://modrinth.com/mod/malilib)
-- [Litematica](https://modrinth.com/mod/litematica)
-
-Optional integrations:
-
-- [Tweakeroo](https://modrinth.com/mod/tweakeroo)
-- [Quick Shulker](https://github.com/MoRanpcy/quickshulker)
-- [Take It Out](https://modrinth.com/mod/takeitout), on supported 1.21.x and 26.x versions
-- [Chest Tracker](https://github.com/ponuing/ChestTracker), on versions with a matching upstream build
-- [Neko-Carpet-Addition](https://github.com/YoshinoShizuka/Neko-Carpet-Addition), a server-side Void Warehouse integration supported by the printer on 1.21.11 and later
-
-Dependency versions must match the Minecraft version being launched.
-
-## Features
-
-### Printing and performance
-
-- Player-centered placement ordered by distance.
-- Scanner caching and time-budgeted iteration for large schematic areas.
-- Packet-based placement for faster operation without client-side ghost blocks.
-- Placement progress and missing-material HUDs.
-- Server-lag and round-trip-time safeguards for mixed-material printing.
-- Safer handling for directional and state-sensitive blocks.
-
-### Building tools
-
-- Fill within the active schematic or selection area.
-- Drain water and lava source blocks.
-- Mine blocks within the selected area.
-- Independent handling of extra blocks and wrong-state blocks.
-- Bedrock-breaking mode with an allowlist.
-- Waterlogged block placement and ice-breaking water placement.
-- Replacement of dead coral in the schematic using live coral.
-
-### Inventory integrations
-
-- Container sync: bind **Sync Containers**, enable the master work switch, select an empty main-hand slot and point at a template chest, barrel, shulker box, hopper, dispenser, dropper or crafter. Containers of the same type and capacity in the Litematica area selection are filled slot by slot; double chests count as one container. Move within normal interaction range of each target.
-- Crafters synchronize items only, preserving each target's disabled slots. A template item that conflicts with a disabled target slot pauses the task. The recipe result preview is excluded. Available from 1.20.4 when crafters are enabled in the world.
-- Materials come from your inventory; surplus returns there. Missing items or storage space pauses the task; press the hotkey to retry after resolving it. Pressing the hotkey while running or disabling the master switch cancels after the current transfer settles. Main hand, armor, offhand and protected hotbar slots are excluded. Remote retrieval integrations are not required.
-- If the server forcibly closes a container during transfer, synchronization waits for a full inventory confirmation before pausing. The server handles the carried stack; vanilla may drop items that cannot fit in your inventory.
-
-- Quick Shulker material retrieval and ordered return.
-- Take It Out remote material retrieval on supported versions.
-- Chest Tracker retrieval from containers explicitly cached inside the active Litematica selection on supported versions.
-- Void Warehouse: retrieve missing materials from the server warehouse and optionally include its stock in the material list's available counts. The server needs a matching version of [Neko-Carpet-Addition](https://github.com/YoshinoShizuka/Neko-Carpet-Addition), with both the `voidWarehouse` and `voidWarehouseRestock` Carpet rules enabled.
-- Void Warehouse leftovers: restocking hands out whole stacks, so unused remainders are returned to the warehouse in bulk - once printing stops, and while printing whenever 3 or fewer inventory slots are free. Only items the warehouse actually supplied are returned; your own stacks are never touched.
-- Void Warehouse direct placement: in survival mode, ordinary block placements prefer stock held by the server warehouse. The server reserves one item for vanilla placement, without sending a stack through your inventory; carried materials remain available. Cancelled or failed attempts normally refund it. If a third-party hook throws after placement starts and the outcome is uncertain, that one item is charged conservatively. Requires Minecraft 1.21.11+ and a matching Neko-Carpet-Addition server with `voidWarehouse`, `voidWarehouseRestock` and the new `voidWarehouseDirectPlace` rule enabled. The new server rule defaults to `false`.
-- With Easy Place enabled, precise warehouse placement uses server-side Servux to preserve supported facing and block-state properties, respecting its Easy Place settings and permissions. Update both the printer and Neko-Carpet-Addition to matching versions with this support (R2), and install Servux on the server; no additional client dependency is needed. Older servers or servers without Servux keep the usual precise placement and restock path. Easy Place can stay enabled throughout.
-- Buckets, tools, repeated clicks and specialized block items such as doors, beds and signs keep the usual placement and restock path. Unsupported servers, empty warehouse candidates and rejected direct clicks also fall back to that path. Direct placement uses server-confirmed block updates; material list stock snapshots are never used to authorize consumption. Server rules are renegotiated every 5 seconds.
-- Enable `voidWarehouseRestock`, `voidWarehouseDirectPlace`, `voidWarehouseMaterialList` and `voidWarehouseReturn` in the printer settings as needed. All four client options are disabled by default. Direct placement has its own client switch; the separate restock switch controls inventory restocking during fallback.
-- Material switching safeguards intended to prevent placement with the previous hotbar item.
-
-The printer also contains special placement logic for many vanilla blocks, including stairs, doors, trapdoors, hoppers, chests, levers, redstone wire, vines, hanging plants, grindstones, crafters, flower clusters, and other directional blocks.
-
-## Basic usage
-
-1. Load a schematic in the world with Litematica.
-2. Move within interaction range of the schematic blocks.
-3. Press `Caps Lock` to enable the printer.
-4. Adjust printer settings in the configuration screen when required by the server.
-
-Most options include tooltips in the configuration interface. There is not yet an official full tutorial.
-
-## Known unsupported content
-
-Some content cannot currently be printed reliably and may be skipped or placed with an incorrect state:
-
-- Skulls, signs, banners, and other blocks with unusually complex state or data handling.
-- Cauldrons containing fluids.
-- Entities such as item frames, armor stands, and paintings.
-- Non-vanilla content unless it is explicitly supported.
-
-If a vanilla block is placed incorrectly even at a conservative work interval, submit a [block support report](https://github.com/Yur1Ca/litematica-printer/issues/new/choose).
-
-## Troubleshooting
-
-### The printer does not work after being enabled
-
-- Some anti-cheat systems reject the printer's silent rotation or placement interaction.
-- A very short work interval can exceed a server's placement-rate limit. Increase the interval or try packet-based printing when the server supports it.
-- Account or session state can occasionally interfere with interaction packets. Reconnecting the account or server may help.
-
-### Blocks are placed with the wrong state
-
-- Server anti-cheat or high latency may prevent the simulated rotation from being accepted.
-- The work interval may be too short for the server to acknowledge material switching and placement.
-- The block may require placement logic that is not implemented yet. Please include its block ID, target state, Minecraft version, printer version, and a reproducible example in the issue.
-
-### Quick Shulker does not work
-
-- The server must support opening shulker boxes from the inventory for the selected integration mode.
-- The configured mode must match the mod or server behavior actually available.
-- Litematica's `pickBlockableSlots` must contain usable hotbar slots and should not be filled entirely with shulker boxes.
-
-![Recommended pick-block slots](预设位置.png)
-
-## Support and contributing
-
-- Use [GitHub Discussions](https://github.com/Yur1Ca/litematica-printer/discussions) for installation help, configuration questions, compatibility discussions, and general feedback.
-- Use [GitHub Issues](https://github.com/Yur1Ca/litematica-printer/issues/new/choose) only for reproducible bugs, block support problems, and concrete feature requests.
-- Search existing Issues and Discussions before opening a new report.
-- Keep one independently reproducible problem per Issue and attach `latest.log`, crash reports, screenshots, or short recordings where relevant.
-
-## Building
-
-JDK 25 is recommended when building the complete multi-version Wrapper.
-
-```bash
-./gradlew :fabricWrapper:build
-```
-
-Build outputs:
-
-- Multi-version Wrapper: `fabricWrapper/build/libs/`
-- Standalone version JARs: `fabricWrapper/build/libs/jars/`
-
-The first build downloads Minecraft and mod dependencies and may require a working connection to their Maven repositories.
-
-Push builds compile and package every supported version, but run tests only for the main development version in `versions/mainProject`. Pull requests keep the full test matrix; releases retain all checks for the selected version set. Manual runs of the `build` workflow default to `full`, with `main` also available. The local build command above still runs all checks. Runs of the `build` workflow upload a `gradle-profile` artifact with task timings; compare it with the Actions step timings to distinguish cache restoration from compilation and tests.
-
-## Acknowledgements
-
-- [bunny_i](https://github.com/bunnyi116) for broad support and contributions to the project.
-- [aleksilassila/litematica-printer](https://github.com/aleksilassila/litematica-printer) for the original project.
-- [zhaixianyu/litematica-printer](https://github.com/zhaixianyu/litematica-printer) for earlier fixes and features.
-- [MoRanpcy/quickshulker](https://github.com/MoRanpcy/quickshulker) for Quick Shulker integration.
-- [bunnyi116/fabric-bedrock-miner](https://github.com/bunnyi116/fabric-bedrock-miner) for the bedrock-breaking foundation.
-- Everyone who tests, reports issues, contributes code, or supports the project.
-
-## License
-
-This project is licensed under the [GNU Affero General Public License v3.0](LICENSE.md).
+Neko 协议兼容代码的 MIT 版权和许可保存在 src/main/resources/licenses/Neko-Carpet-Addition-MIT.txt，随 JAR 分发。详见 [移植说明](PORT-NOTICE.txt)。OvOSSK 仅署名移植维护贡献，本版本不是上游官方发布。

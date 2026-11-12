@@ -1,0 +1,4 @@
+pluginManagement {
+ repositories { maven { url 'https://maven.fabricmc.net/' }; mavenCentral(); gradlePluginPortal() }
+}
+rootProject.name = 'litematica-printer-hana-1.20.1'

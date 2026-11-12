@@ -10,7 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.util.List;
@@ -51,7 +51,7 @@ final class BedrockInventorySession {
                 if (player == null || client.gameMode == null || inventorySlot < 0 || inventorySlot >= 36
                         || player.containerMenu != player.inventoryMenu || !player.inventoryMenu.getCarried().isEmpty()) return false;
                 int menuSlot = inventorySlot < 9 ? inventorySlot + 36 : inventorySlot;
-                client.gameMode.handleContainerInput(player.inventoryMenu.containerId, menuSlot, 40, ContainerInput.SWAP, player);
+                client.gameMode.handleInventoryMouseClick(player.inventoryMenu.containerId, menuSlot, 40, ClickType.SWAP, player);
                 return true;
             }
             public boolean materialRequiresInventorySwap(Item item) { return BedrockInventory.materialRequiresInventorySwap(item); }
@@ -237,11 +237,7 @@ final class BedrockInventorySession {
             var current = inventory.getItem(slot);
             var baseline = this.countBaselines[slot];
             if (current.is(Items.PISTON) && baseline != null && this.availableCount(slot) > 0
-                    //#if MC > 12004
-                    && ItemStack.isSameItemSameComponents(baseline, current)
-                    //#else
-                    //$$ && ItemStack.isSameItemSameTags(baseline, current)
-                    //#endif
+                    && ItemStack.isSameItemSameTags(baseline, current)
                     && VoidWarehouseTriggerItem.isUsableAsMaterial(current)) return slot;
         }
         return -1;

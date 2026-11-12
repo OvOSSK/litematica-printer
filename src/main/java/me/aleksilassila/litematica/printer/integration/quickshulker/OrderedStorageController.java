@@ -8,7 +8,7 @@ import me.aleksilassila.litematica.printer.utils.mods.ShulkerUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -125,11 +125,7 @@ final class OrderedStorageController {
         }
         LocalPlayer player = client.player;
         if (player == null || client.level == null || client.gameMode == null
-                //#if MC > 260100
-                //$$ || client.gui.screen() != null
-                //#else
                 || client.screen != null
-                //#endif
                 || !player.containerMenu.equals(player.inventoryMenu)) {
             return this.restoreSession.hasPending();
         }

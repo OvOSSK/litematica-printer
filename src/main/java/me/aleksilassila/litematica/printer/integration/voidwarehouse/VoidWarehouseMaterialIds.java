@@ -1,8 +1,7 @@
 package me.aleksilassila.litematica.printer.integration.voidwarehouse;
 
-//#if MC >= 12111
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -21,10 +20,10 @@ import net.minecraft.world.item.Items;
  * <h2>为什么是 {@code toString()} 而不是 {@code getPath()}</h2>
  * <p>服务端 {@code PrinterQueryService} 的处理链是：</p>
  * <pre>
- *   Identifier.tryParse(raw) → BuiltInRegistries.ITEM.getOptional(id)
+ *   ResourceLocation.tryParse(raw) → BuiltInRegistries.ITEM.getOptional(id)
  *                            → BuiltInRegistries.ITEM.getKey(item).toString()
  * </pre>
- * <p>即「再解析一次、再序列化一次」。{@code Identifier.toString()} 给的是
+ * <p>即「再解析一次、再序列化一次」。{@code ResourceLocation.toString()} 给的是
  * {@code namespace:path}（{@code getPath()} 会把 {@code minecraft:} 丢掉），
  * 这正是服务端会吐回来的那种形式，所以两边相等。</p>
  *
@@ -67,8 +66,7 @@ public final class VoidWarehouseMaterialIds {
         if (item == null || item == Items.AIR) {
             return null;
         }
-        Identifier key = BuiltInRegistries.ITEM.getKey(item);
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
         return key == null ? null : key.toString();
     }
 }
-//#endif

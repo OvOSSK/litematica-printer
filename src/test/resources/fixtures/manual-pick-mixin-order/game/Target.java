@@ -1,1 +1,0 @@
-package game; public class Target { public static int pick(){return 0;} }

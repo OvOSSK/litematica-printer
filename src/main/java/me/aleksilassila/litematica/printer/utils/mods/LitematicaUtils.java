@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 
-//#if MC < 11900
-//$$ import fi.dy.masa.malilib.util.SubChunkPos;
-//#endif
 
 @SuppressWarnings("BooleanMethodIsAlwaysInverted")
 public class LitematicaUtils {
@@ -37,18 +34,10 @@ public class LitematicaUtils {
             EasyPlaceProtocol protocol = PlacementHandler.getEffectiveProtocolVersion();
             Vec3 hitPos = Vec3.atLowerCornerOf(pos);
             if (protocol == EasyPlaceProtocol.V3) {
-                //#if MC > 260100
-                //$$ return fi.dy.masa.litematica.util.EasyPlaceUtils.applyPlacementProtocolV3(pos, stateSchematic, hitPos);
-                //#else
                 return fi.dy.masa.litematica.util.WorldUtils.applyPlacementProtocolV3(pos, stateSchematic, hitPos);
-                //#endif
             } else if (protocol == EasyPlaceProtocol.V2) {
                 // Carpet Accurate Block placements protocol support, plus slab support
-                //#if MC > 260100
-                //$$ return fi.dy.masa.litematica.util.EasyPlaceUtils.applyCarpetProtocolHitVec(pos, stateSchematic, hitPos);
-                //#else
                 return fi.dy.masa.litematica.util.WorldUtils.applyCarpetProtocolHitVec(pos, stateSchematic, hitPos);
-                //#endif
             }
         }
         return null;
@@ -61,18 +50,10 @@ public class LitematicaUtils {
      */
     public static boolean isSchematicBlock(BlockPos pos) {
         SchematicPlacementManager schematicPlacementManager = DataManager.getSchematicPlacementManager();
-        //#if MC < 11900
-        //$$ List<SchematicPlacementManager.PlacementPart> allPlacementsTouchingChunk = schematicPlacementManager.getAllPlacementsTouchingSubChunk(new SubChunkPos(pos));
-        //#else
         List<SchematicPlacementManager.PlacementPart> allPlacementsTouchingChunk = schematicPlacementManager.getAllPlacementsTouchingChunk(pos);
-        //#endif
 
         for (SchematicPlacementManager.PlacementPart placementPart : allPlacementsTouchingChunk) {
-            //#if MC > 260100
-            //$$ if (placementPart.getBox().contains(pos)) {
-            //#else
             if (placementPart.getBox().containsPos(pos)) {
-            //#endif
                 return true;
             }
         }
@@ -191,21 +172,12 @@ public class LitematicaUtils {
         if (clamped == null) {
             return null;
         }
-        //#if MC > 260100
-        //$$ int minX = clamped.minX();
-        //$$ int minY = clamped.minY();
-        //$$ int minZ = clamped.minZ();
-        //$$ int maxX = clamped.maxX();
-        //$$ int maxY = clamped.maxY();
-        //$$ int maxZ = clamped.maxZ();
-        //#else
         int minX = clamped.getMinValueForAxis(Direction.Axis.X);
         int minY = clamped.getMinValueForAxis(Direction.Axis.Y);
         int minZ = clamped.getMinValueForAxis(Direction.Axis.Z);
         int maxX = clamped.getMaxValueForAxis(Direction.Axis.X);
         int maxY = clamped.getMaxValueForAxis(Direction.Axis.Y);
         int maxZ = clamped.getMaxValueForAxis(Direction.Axis.Z);
-        //#endif
         if (minX > maxX || minY > maxY || minZ > maxZ) {
             return null;
         }

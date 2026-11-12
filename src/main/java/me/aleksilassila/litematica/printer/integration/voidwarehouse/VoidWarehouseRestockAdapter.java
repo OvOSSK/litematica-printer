@@ -1,6 +1,5 @@
 package me.aleksilassila.litematica.printer.integration.voidwarehouse;
 
-//#if MC >= 12111
 import me.aleksilassila.litematica.printer.config.Configs;
 import me.aleksilassila.litematica.printer.core.action.ResourceLease;
 import me.aleksilassila.litematica.printer.printer.action.ActionPort;
@@ -12,7 +11,7 @@ import neko.voidwarehouse.restock.PrinterTakePayload;
 import neko.voidwarehouse.restock.PrinterTakeResultPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -340,7 +339,7 @@ public final class VoidWarehouseRestockAdapter implements InventoryProvider {
         if (item == null || candidates.size() >= PrinterTakePayload.MAX_CANDIDATES) {
             return;
         }
-        Identifier key = BuiltInRegistries.ITEM.getKey(item);
+        ResourceLocation key = BuiltInRegistries.ITEM.getKey(item);
         if (key == null) {
             return;
         }
@@ -437,4 +436,3 @@ public final class VoidWarehouseRestockAdapter implements InventoryProvider {
         return new MaterialReservation(request.token(), MaterialReservation.State.UNAVAILABLE);
     }
 }
-//#endif

@@ -1,12 +1,11 @@
 package neko.voidwarehouse.restock;
 
-//#if MC >= 12111
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import neko.compat.StreamCodec;
+import neko.compat.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 
@@ -19,7 +18,7 @@ public record PrinterPlacePayload(int nonce, List<String> candidates, BlockPos t
     public static final int MAX_CANDIDATES = 8;
     public static final int MAX_ITEM_ID_LENGTH = 256;
     public static final Type<PrinterPlacePayload> TYPE = new Type<>(
-            Identifier.fromNamespaceAndPath("carpet_neko_addition", "printer_place"));
+            new ResourceLocation("carpet_neko_addition", "printer_place"));
     public static final StreamCodec<FriendlyByteBuf, PrinterPlacePayload> CODEC = new StreamCodec<>() {
         @Override
         public PrinterPlacePayload decode(FriendlyByteBuf buf) {
@@ -34,7 +33,7 @@ public record PrinterPlacePayload(int nonce, List<String> candidates, BlockPos t
             }
             BlockPos target = buf.readBlockPos();
             BlockPos clicked = buf.readBlockPos();
-            Direction face = Direction.values()[buf.readVarInt()];
+            Direction face = buf.readEnum(Direction.class);
             Vec3 location = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
             BlockHitResult hit = new BlockHitResult(location, face, clicked, buf.readBoolean());
             return new PrinterPlacePayload(nonce, List.copyOf(candidates), target, hit, buf.readVarInt(), buf.readUtf(256));
@@ -53,7 +52,7 @@ public record PrinterPlacePayload(int nonce, List<String> candidates, BlockPos t
             }
             buf.writeBlockPos(payload.target());
             buf.writeBlockPos(payload.hit().getBlockPos());
-            buf.writeVarInt(payload.hit().getDirection().ordinal());
+            buf.writeEnum(payload.hit().getDirection());
             Vec3 location = payload.hit().getLocation();
             buf.writeDouble(location.x);
             buf.writeDouble(location.y);
@@ -70,4 +69,3 @@ public record PrinterPlacePayload(int nonce, List<String> candidates, BlockPos t
     }
 }
 
-//#endif

@@ -81,7 +81,7 @@ public final class BedrockInventory {
         LocalPlayer player = CLIENT.player;
         if (player == null || state == null || state.isAir()) return false;
         ItemStack best = cleanup ? findBestCleanupBreakingStack(player, state) : findBestBreakingStack(player, state);
-        return !best.isEmpty() && !ItemStack.isSameItemSameComponents(best, player.getMainHandItem())
+        return !best.isEmpty() && !ItemStack.isSameItemSameTags(best, player.getMainHandItem())
                 && !Inventory.isHotbarSlot(player.getInventory().findSlotMatchingItem(best));
     }
 
@@ -159,7 +159,7 @@ public final class BedrockInventory {
         if (bestStack.isEmpty()) {
             return false;
         }
-        if (ItemStack.isSameItemSameComponents(bestStack, player.getMainHandItem())) {
+        if (ItemStack.isSameItemSameTags(bestStack, player.getMainHandItem())) {
             return true;
         }
         boolean inventorySwap = !Inventory.isHotbarSlot(player.getInventory().findSlotMatchingItem(bestStack));
@@ -237,31 +237,17 @@ public final class BedrockInventory {
 
     private static float getBlockBreakingSpeed(LocalPlayer player, BlockState blockState, ItemStack itemStack) {
         float speed = itemStack.getDestroySpeed(blockState);
-        //#if MC > 12006
         if (speed > 1.0F) {
-            for (var entry : itemStack.getEnchantments().entrySet()) {
-                Optional<net.minecraft.resources.ResourceKey<Enchantment>> key = entry.getKey().unwrapKey();
-                if (key.isPresent() && key.get() == Enchantments.EFFICIENCY) {
-                    int level = EnchantmentHelper.getItemEnchantmentLevel(entry.getKey(), itemStack);
-                    if (level > 0 && !itemStack.isEmpty()) {
-                        speed += (float) (level * level + 1);
-                    }
-                }
+            int level = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_EFFICIENCY, itemStack);
+            if (level > 0 && !itemStack.isEmpty()) {
+                speed += (float) (level * level + 1);
             }
         }
-        //#else
-        //$$ if (speed > 1.0F) {
-        //$$     int level = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.EFFICIENCY, itemStack);
-        //$$     if (level > 0 && !itemStack.isEmpty()) {
-        //$$         speed += (float) (level * level + 1);
-        //$$     }
-        //$$ }
-        //#endif
         if (MobEffectUtil.hasDigSpeed(player)) {
             speed *= 1.0F + (float) (MobEffectUtil.getDigSpeedAmplification(player) + 1) * 0.2F;
         }
-        if (player.hasEffect(MobEffects.MINING_FATIGUE)) {
-            int amplifier = player.getEffect(MobEffects.MINING_FATIGUE).getAmplifier();
+        if (player.hasEffect(MobEffects.DIG_SLOWDOWN)) {
+            int amplifier = player.getEffect(MobEffects.DIG_SLOWDOWN).getAmplifier();
             speed *= switch (amplifier) {
                 case 0 -> 0.3F;
                 case 1 -> 0.09F;
@@ -269,12 +255,6 @@ public final class BedrockInventory {
                 default -> 8.1E-4F;
             };
         }
-        //#if MC > 12006
-        AttributeInstance breakSpeed = player.getAttribute(Attributes.BLOCK_BREAK_SPEED);
-        if (breakSpeed != null) {
-            speed *= (float) breakSpeed.getValue();
-        }
-        //#endif
         if (!player.onGround()) {
             speed /= 5.0F;
         }

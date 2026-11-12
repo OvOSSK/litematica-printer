@@ -1,23 +1,15 @@
 package me.aleksilassila.litematica.printer.utils.minecraft;
 
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 public class IdentifierUtils {
 
-    public static Identifier of(String string) {
-        //#if MC > 12006
-        return Identifier.parse(string);
-        //#else
-        //$$ return new ResourceLocation(string);
-        //#endif
+    public static ResourceLocation of(String string) {
+        return new ResourceLocation(string);
     }
 
-    public static Identifier of(String namespace, String path) {
-        //#if MC > 12006
-        return Identifier.fromNamespaceAndPath(namespace, path);
-        //#else
-        //$$ return new ResourceLocation(namespace, path);
-        //#endif
+    public static ResourceLocation of(String namespace, String path) {
+        return new ResourceLocation(namespace, path);
     }
 }
 

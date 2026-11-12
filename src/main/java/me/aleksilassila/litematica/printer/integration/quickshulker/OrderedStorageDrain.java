@@ -7,7 +7,7 @@ import me.aleksilassila.litematica.printer.integration.containersync.ContainerSy
 import me.aleksilassila.litematica.printer.integration.containersync.ContainerSyncTransfer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 
 /** Keeps an orderly return's menu and lease alive until all earlier clicks have been synchronized. */
@@ -79,7 +79,7 @@ final class OrderedStorageDrain {
                 revision = menu.getStateId();
                 QuickShulkerDiagnostics.log("orderly-return click menu=" + menu.containerId + " slot=" + slots.get(slot));
                 QuickShulkerClicks.sendWithFullSync(menu, slots.get(slot), button,
-                        swap ? ContainerInput.SWAP : ContainerInput.PICKUP);
+                        swap ? ClickType.SWAP : ClickType.PICKUP);
             }
             public void refresh() {
                 requestedMenu = menu;

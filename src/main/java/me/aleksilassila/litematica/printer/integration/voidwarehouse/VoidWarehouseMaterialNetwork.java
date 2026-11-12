@@ -1,6 +1,5 @@
 package me.aleksilassila.litematica.printer.integration.voidwarehouse;
 
-//#if MC >= 12111
 import com.google.common.collect.ImmutableList;
 import fi.dy.masa.litematica.data.DataManager;
 import fi.dy.masa.litematica.gui.GuiMaterialList;
@@ -11,8 +10,8 @@ import me.aleksilassila.litematica.printer.config.Configs;
 import me.aleksilassila.litematica.printer.mixin.printer.malilib.GuiListBaseAccessor;
 import neko.voidwarehouse.restock.PrinterQueryPayload;
 import neko.voidwarehouse.restock.PrinterQueryResultPayload;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
-import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import neko.compat.ClientPlayNetworking;
+import neko.compat.PayloadTypeRegistry;
 import net.minecraft.client.Minecraft;
 
 import java.util.LinkedHashSet;
@@ -93,13 +92,8 @@ public final class VoidWarehouseMaterialNetwork {
      */
     private static void registerC2S() {
         try {
-            //#if MC >= 260100
-            PayloadTypeRegistry.serverboundPlay().register(
+            PayloadTypeRegistry.playC2S().register(
                     PrinterQueryPayload.TYPE, PrinterQueryPayload.CODEC);
-            //#else
-            //$$ PayloadTypeRegistry.playC2S().register(
-            //$$         PrinterQueryPayload.TYPE, PrinterQueryPayload.CODEC);
-            //#endif
         } catch (IllegalArgumentException alreadyRegisteredByServerMod) {
             // 类型名与 codec 两端完全相同，谁注册的没有任何区别，直接用即可。
         }
@@ -114,13 +108,8 @@ public final class VoidWarehouseMaterialNetwork {
      */
     private static void registerResultReceiver() {
         try {
-            //#if MC >= 260100
-            PayloadTypeRegistry.clientboundPlay().register(
+            PayloadTypeRegistry.playS2C().register(
                     PrinterQueryResultPayload.TYPE, PrinterQueryResultPayload.CODEC);
-            //#else
-            //$$ PayloadTypeRegistry.playS2C().register(
-            //$$         PrinterQueryResultPayload.TYPE, PrinterQueryResultPayload.CODEC);
-            //#endif
         } catch (IllegalArgumentException alreadyRegisteredByServerMod) {
             // 同上
         }
@@ -227,11 +216,7 @@ public final class VoidWarehouseMaterialNetwork {
      * 判据同样是 {@code MC > 260100}。</p>
      */
     private static boolean isMaterialListScreenOpen(Minecraft client) {
-        //#if MC > 260100
-        //$$ return client.gui.screen() instanceof GuiMaterialList;
-        //#else
         return client.screen instanceof GuiMaterialList;
-        //#endif
     }
 
     /**
@@ -333,11 +318,7 @@ public final class VoidWarehouseMaterialNetwork {
         // refreshPreFilteredList preserves the user's explicitly ignored entries.
         if (list != null) list.refreshPreFilteredList();
         Minecraft client = Minecraft.getInstance();
-        //#if MC > 260100
-        //$$ var screen = client.gui.screen();
-        //#else
         var screen = client.screen;
-        //#endif
         if (screen instanceof GuiMaterialList gui) {
             if (gui.getMaterialList() != list) gui.getMaterialList().refreshPreFilteredList();
             var browser = ((GuiListBaseAccessor) gui).litematicaPrinter$getListWidget();
@@ -356,4 +337,3 @@ public final class VoidWarehouseMaterialNetwork {
         return nonce;
     }
 }
-//#endif

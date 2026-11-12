@@ -1,6 +1,5 @@
 package me.aleksilassila.litematica.printer.integration.voidwarehouse;
 
-//#if MC >= 12111
 import me.aleksilassila.litematica.printer.Reference;
 import me.aleksilassila.litematica.printer.config.Configs;
 import me.aleksilassila.litematica.printer.core.runtime.RuntimeComponent;
@@ -870,7 +869,7 @@ public final class VoidWarehouseReturnController implements RuntimeComponent {
                         continue;
                     }
                     ItemStack stack = inventory.getItem(slot);
-                    if (stack.isEmpty() || !ItemStack.isSameItemSameComponents(stack, sample)) {
+                    if (stack.isEmpty() || !ItemStack.isSameItemSameTags(stack, sample)) {
                         continue;
                     }
                     Integer left = budget.get(item);
@@ -954,7 +953,7 @@ public final class VoidWarehouseReturnController implements RuntimeComponent {
         ItemStack sample = new ItemStack(item);
         for (int slot = 0; slot < size; slot++) {
             ItemStack stack = inventory.getItem(slot);
-            if (!stack.isEmpty() && ItemStack.isSameItemSameComponents(stack, sample)) {
+            if (!stack.isEmpty() && ItemStack.isSameItemSameTags(stack, sample)) {
                 total += stack.getCount();
             }
         }
@@ -1049,11 +1048,10 @@ public final class VoidWarehouseReturnController implements RuntimeComponent {
             }
             Integer pending = this.injected.get(stack.getItem());
             if (pending != null && pending > 0
-                    && ItemStack.isSameItemSameComponents(stack, new ItemStack(stack.getItem()))) {
+                    && ItemStack.isSameItemSameTags(stack, new ItemStack(stack.getItem()))) {
                 count++;
             }
         }
         return count;
     }
 }
-//#endif

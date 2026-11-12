@@ -8,7 +8,7 @@ import me.aleksilassila.litematica.printer.printer.SchematicBlockContext;
 import me.aleksilassila.litematica.printer.printer.action.Action;
 import me.aleksilassila.litematica.printer.utils.minecraft.BlockUtils;
 import me.aleksilassila.litematica.printer.utils.minecraft.IdentifierUtils;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 
@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class CoralGuide extends Guide {
 
-    private final Identifier blockId;
+    private final ResourceLocation blockId;
 
     public CoralGuide(SchematicBlockContext context) {
         super(context);
@@ -38,7 +38,7 @@ public class CoralGuide extends Guide {
         items.add(requiredBlock.asItem());
 
         if (Configs.Print.REPLACE_CORAL.getBooleanValue()) {
-            Identifier coralId = IdentifierUtils.of(blockId.toString().replace("dead_", ""));
+            ResourceLocation coralId = IdentifierUtils.of(blockId.toString().replace("dead_", ""));
             if (!blockId.equals(coralId)) {
                 items.add(BlockUtils.getBlock(coralId).asItem());
             }

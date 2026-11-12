@@ -37,11 +37,7 @@ public class MixinInventoryUtils {
         }
         // Match native Easy Place before requesting material. A schematic-only ray can hit an
         // already built block or a projection behind the real block the player is interacting with.
-        //#if MC > 12100
-        double range = WorldUtils.getValidBlockRange(mc);
-        //#else
-        //$$ double range = fi.dy.masa.litematica.config.Configs.Generic.EASY_PLACE_VANILLA_REACH.getBooleanValue() ? 4.5D : 6.0D;
-        //#endif
+        double range = fi.dy.masa.litematica.config.Configs.Generic.EASY_PLACE_VANILLA_REACH.getBooleanValue() ? 4.5D : 6.0D;
         boolean first = fi.dy.masa.litematica.config.Configs.Generic.EASY_PLACE_FIRST.getBooleanValue();
         var trace = first
                 ? RayTraceUtils.getGenericTrace(mc.level, mc.player, range, true,
@@ -49,9 +45,7 @@ public class MixinInventoryUtils {
                 : RayTraceUtils.getFurthestSchematicWorldTraceBeforeVanilla(mc.level, mc.player, range);
         if (trace == null) {
             boolean restricted = false;
-            //#if MC >= 11904
             restricted = !first && litematicaPrinter$placementRestricted(mc);
-            //#endif
             cir.setReturnValue(restricted ? InteractionResult.FAIL : InteractionResult.PASS);
             return;
         }
@@ -76,11 +70,7 @@ public class MixinInventoryUtils {
         }
         BlockState actual = mc.level.getBlockState(pos);
         HitResult vanillaHit = RayTraceUtils.getRayTraceFromEntity(mc.level, mc.player, false, range);
-        //#if MC >= 260200
-        //$$ boolean blocked = expected == actual || EasyPlaceUtilsAccessor.callEasyPlaceBlockChecksCancel(expected, actual, mc.player, vanillaHit, stack);
-        //#else
         boolean blocked = expected == actual || easyPlaceBlockChecksCancel(expected, actual, mc.player, vanillaHit, stack);
-        //#endif
         if (blocked) {
             // Finish with the native result: falling through would let Take It Out restart this
             // rejected right-click through doSchematicWorldPickBlock and bypass these checks.
@@ -92,14 +82,9 @@ public class MixinInventoryUtils {
 
     @Unique
     private static boolean litematicaPrinter$placementRestricted(Minecraft mc) {
-        //#if MC >= 260200
-        //$$ return EasyPlaceUtilsAccessor.callPlacementRestrictionInEffect(mc);
-        //#else
         return placementRestrictionInEffect(mc);
-        //#endif
     }
 
-    //#if MC < 260200
     @Shadow(remap = false)
     private static boolean placementRestrictionInEffect(Minecraft mc) {
         throw new UnsupportedOperationException();
@@ -110,7 +95,6 @@ public class MixinInventoryUtils {
                                                       HitResult hit, ItemStack stack) {
         throw new UnsupportedOperationException();
     }
-    //#endif
 
     @Inject(at = @At("HEAD"), method = "doSchematicWorldPickBlock", cancellable = true, remap = false)
     private static void schematicWorldPickBlock(boolean closest, Minecraft mc,

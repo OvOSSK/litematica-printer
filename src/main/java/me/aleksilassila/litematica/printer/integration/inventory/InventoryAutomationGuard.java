@@ -13,11 +13,7 @@ public final class InventoryAutomationGuard {
         Minecraft client = Minecraft.getInstance();
         if (client == null || client.player == null) return false;
         // IPN already pauses refill with a visible screen. Keep its GUI swipe/save tail running.
-        //#if MC > 260100
-        //$$ if (client.gui.screen() != null) return false;
-        //#else
         if (client.screen != null) return false;
-        //#endif
         // IPN searches inventoryMenu slot numbers but clicks containerMenu. A hidden screen
         // does not make a foreign menu safe for that operation.
         if (client.player.containerMenu != client.player.inventoryMenu) return true;

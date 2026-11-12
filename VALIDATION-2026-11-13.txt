@@ -1,0 +1,33 @@
+Fabric 1.20.1 live integration validation, 2026-11-13 (Asia/Hong_Kong)
+
+Environment: user's existing Fabric 0.20.1 client, Java 21, Carpet 1.4.112,
+Litematica 0.15.4, MaLiLib 0.16.3. Separate flat world: Neko Hana Port Test.
+Installed builds: Neko 1.0.17-mc1.20.1; search 0.1.1-mc1.20.1;
+Hana printer 0.7.2.1-hana-neko.1.
+
+Observed in game:
+- Warehouse terminal rejected as a deposit; remained available on cursor and
+  could be placed back in the hotbar. Warehouse kept two material types.
+- Four-stone schematic loaded and material list opened without an injection crash.
+- With empty material inventory, warehouse material counting changed stone
+  availability from 0 to 64, missing materials from 4 to 0.
+- Survival, restock enabled, direct placement disabled: took 64 stone from
+  warehouse, printed four stone blocks, retained 60 stone in inventory.
+  One player-obstructed placement completed after moving away.
+- Return enabled, printer stopped: selected main-hand stack was protected.
+  Switching to terminal returned all 60 stone; receipt reported warehouse 60.
+  This is intentional upstream main-hand protection, not a failed return.
+- Reset only the four test blocks using fill with stone filter, no item drops.
+- Restock disabled, direct placement enabled, no stone in player inventory:
+  printed four stone blocks. Warehouse total became 120 (64 planks + 56 stone).
+- Survival manual round trip: left-click withdrew one stone (warehouse 55),
+  picked it up from hotbar, ordinary left-click on occupied plank display
+  deposited it; warehouse total returned to 120, no carried/extra stone remained.
+- Printer work switch left OFF after validation.
+
+Earlier checks in this test world: matching search, no-match search and clearing
+search; direct deposit into empty and occupied display slots; stock survived restart.
+
+Limits: this is a small single-player integration test, not exhaustive coverage
+of special block states, full-inventory return pressure, or a remote multiplayer
+client/server pairing. No claim that every upstream printer feature is verified.

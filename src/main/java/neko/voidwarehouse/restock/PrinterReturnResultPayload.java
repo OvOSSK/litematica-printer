@@ -1,41 +1,45 @@
 package neko.voidwarehouse.restock;
 
-//#if MC >= 12111
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import neko.compat.ByteBufCodecs;
+import neko.compat.StreamCodec;
+import neko.compat.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 /**
  * 服务端 → 打印机：「刚才那批返还的结果」。
  *
- * <h2>这个包给客户端的两样东西</h2>
+ * <h2>回执拿来干什么</h2>
+ * <p>客户端并不需要靠它判断「东西还在不在手上」—— 那件事背包同步会告诉它。
+ * 回执真正的用处只有两个：</p>
  * <ol>
- *   <li><b>销账依据</b>：{@code returned} 是这次真正收进仓库的<b>总数量</b>，
+ *   <li><b>知道自己那笔账该销多少</b>：{@code returned} 是这次真正收进仓库的<b>总数量</b>，
  *       客户端据此把「仓库欠我的」那本账减掉，避免把自己的库存也当成仓库给的退回去；</li>
- *   <li><b>失败原因</b>：规则没开 / 撞限流 / 包不合法，客户端应当退避而不是每 tick 重发。</li>
+ *   <li><b>失败时立刻收手</b>：规则没开 / 撞限流 / 包不合法，等下去毫无意义，
+ *       客户端应当退避而不是每 tick 重发。</li>
  * </ol>
  *
- * <h2>逐物品明细为什么<b>不在</b>这里</h2>
- * <p>明细走独立通道 {@link PrinterReturnDetailPayload}（{@code printer_return_detail}）。
- * 塞进本包末尾会让<b>新客户端配旧服务端</b>解码失败（旧服务端后面没有字节），
- * 而这条通道的设计前提是「不认识的包不发、不认识的版本不崩」。
- * 拆开之后两个包各自演进，任意新旧组合都安全。</p>
+ * <h2>{@code returned} 为什么仍然是总量，不塞逐物品明细</h2>
+ * <p>明细本来可以塞进这个包（在末尾追加几份清单），但那样<b>新客户端配旧服务端</b>就崩了：
+ * 旧服务端只发三个数，新客户端读不到后面的清单，解码直接失败。
+ * 反过来「旧客户端配新服务端」虽然只是忽略尾部多余字节，但那靠的是「没人校验剩余字节」这种
+ * 不成文的前提，不该当契约用。</p>
  *
- * <p>因此本包<b>保持三个数不变</b>，与老版本逐字节相同。</p>
+ * <p>所以明细走独立通道 {@link PrinterReturnDetailPayload}（{@code printer_return_detail}）：
+ * 谁认这条通道谁收，不认的（老客户端 / 老服务端）在 {@code canSend} 那一步就被挡掉，
+ * 两边任何组合都不会解错包。这个包因此<b>保持三个数不变</b>，一个字节都不动。</p>
  *
  * <h2>⚠ 两端共用</h2>
- * <p>服务端原件在 {@code carpet-Neko-Addition/modern/<ver>/src/main/java/neko/voidwarehouse/restock/}，
- * 同包名、同类名，状态码常量与 {@code CODEC} 的结构必须与这里逐字节等价。
- * 判据不是人眼比对：{@code python .workbuddy/tools/check_return_protocol_parity.py}。</p>
+ * <p>客户端镜像在 {@code litematica-printer/src/main/java/neko/voidwarehouse/restock/}，
+ * 同包名、同类名，状态码常量与 {@code CODEC} 结构必须与这里逐字节等价。
+ * 注册方向的规矩与 {@link PrinterTakeResultPayload} 完全一致。</p>
  */
 public record PrinterReturnResultPayload(int nonce, int status, int returned) implements CustomPacketPayload {
 
     /** 唯一的返还回执通道：{@code carpet_neko_addition:printer_return_result}（S2C）。 */
     public static final CustomPacketPayload.Type<PrinterReturnResultPayload> TYPE =
             new CustomPacketPayload.Type<>(
-                    Identifier.fromNamespaceAndPath("carpet_neko_addition", "printer_return_result"));
+                    new ResourceLocation("carpet_neko_addition", "printer_return_result"));
 
     /** 成功：至少有一格真的进了仓库 */
     public static final int OK = 0;
@@ -67,4 +71,4 @@ public record PrinterReturnResultPayload(int nonce, int status, int returned) im
         return TYPE;
     }
 }
-//#endif
+

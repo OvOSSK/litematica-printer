@@ -67,14 +67,9 @@ public final class ScanEngine implements RuntimeComponent {
             return;
         }
         ChunkPos pos = chunk.getPos();
-        //#if MC >= 260100
-        int chunkX = pos.x();
-        int chunkZ = pos.z();
-        //#else
-        //$$ int chunkX = pos.x;
-        //$$ int chunkZ = pos.z;
-        //#endif
-        int minY = level.getMinY();
+        int chunkX = pos.x;
+        int chunkZ = pos.z;
+        int minY = level.getMinBuildHeight();
         this.cache.invalidateChunk(chunkX, chunkZ, minY, minY + level.getHeight() - 1);
     }
 

@@ -28,7 +28,7 @@ public class FlowerPotGuide extends Guide {
     @Override
     protected Result onBuildActionWrongBlock(BlockMatchResult state) {
         if (requiredBlock instanceof FlowerPotBlock potBlock) {
-            Block content = potBlock.getPotted();
+            Block content = potBlock.getContent();
             if (content != Blocks.AIR) {
                 return Result.success(new ClickAction().setItem(content.asItem()));
             }

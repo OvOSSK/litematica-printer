@@ -2,22 +2,12 @@ package me.aleksilassila.litematica.printer.utils.render;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphicsExtractor;
-import net.minecraft.resources.Identifier;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
-//#if MC >= 12106
-import net.minecraft.client.renderer.RenderPipelines;
-//#endif
-//#if MC >= 12103 && MC < 12106
-//$$ import net.minecraft.client.renderer.RenderType;
-//#endif
-//#if MC <= 11904
-//$$ import com.mojang.blaze3d.systems.RenderSystem;
-//$$ import net.minecraft.client.gui.GuiComponent;
-//#endif
 
 
 import java.awt.*;
@@ -29,7 +19,7 @@ import java.awt.*;
 public class Render2DUtils {
     public static final Minecraft client = Minecraft.getInstance();
     private static PoseStack poseStack;
-    private static GuiGraphicsExtractor guiGraphics;
+    private static GuiGraphics guiGraphics;
 
     // ==================== 初始化 ====================
 
@@ -37,20 +27,14 @@ public class Render2DUtils {
         Render2DUtils.poseStack = poseStack;
     }
 
-    public static void initGuiGraphics(GuiGraphicsExtractor guiGraphics) {
+    public static void initGuiGraphics(GuiGraphics guiGraphics) {
         Render2DUtils.guiGraphics = guiGraphics;
     }
 
     public static void ensureInitialized() {
-        //#if MC > 11904
         if (guiGraphics == null) {
             throw new NullPointerException("GuiGraphics is null! Call initGuiGraphics first.");
         }
-        //#else
-        //$$ if (poseStack == null) {
-        //$$     throw new NullPointerException("PoseStack is null! Call initMatrix first.");
-        //$$ }
-        //#endif
     }
 
     // ==================== 文字与矩形 ====================
@@ -65,24 +49,12 @@ public class Render2DUtils {
         }
         ensureInitialized();
 
-        //#if MC > 11904
-        guiGraphics.text(client.font, text, x, y, color.getRGB(), withShadow);
-        //#else
-        //$$ if (withShadow) {
-        //$$    client.font.drawShadow(poseStack, text, x, y, color.getRGB());
-        //$$ } else {
-        //$$    client.font.draw(poseStack, text, x, y, color.getRGB());
-        //$$ }
-        //#endif
+        guiGraphics.drawString(client.font, text, x, y, color.getRGB(), withShadow);
     }
 
     public static void fill(int x1, int y1, int x2, int y2, Color color) {
         ensureInitialized();
-        //#if MC > 11904
         guiGraphics.fill(x1, y1, x2, y2, color.getRGB());
-        //#else
-        //$$ GuiComponent.fill(poseStack, x1, y1, x2, y2, color.getRGB());
-        //#endif
     }
 
     public static void drawStringScaled(String text, int x, int y, Color color, boolean withShadow, float scale) {
@@ -100,46 +72,22 @@ public class Render2DUtils {
 
     public static void pushPose() {
         ensureInitialized();
-        //#if MC >= 12106
-        guiGraphics.pose().pushMatrix();
-        //#elseif MC > 11904
-        //$$ guiGraphics.pose().pushPose();
-        //#else
-        //$$ poseStack.pushPose();
-        //#endif
+        guiGraphics.pose().pushPose();
     }
 
     public static void popPose() {
         ensureInitialized();
-        //#if MC >= 12106
-        guiGraphics.pose().popMatrix();
-        //#elseif MC > 11904
-        //$$ guiGraphics.pose().popPose();
-        //#else
-        //$$ poseStack.popPose();
-        //#endif
+        guiGraphics.pose().popPose();
     }
 
     public static void translate(double x, double y, double z) {
         ensureInitialized();
-        //#if MC >= 12106
-        guiGraphics.pose().translate((float) x, (float) y);
-        //#elseif MC > 11904
-        //$$ guiGraphics.pose().translate((float) x, (float) y, (float) z);
-        //#else
-        //$$ poseStack.translate(x, y, z);
-        //#endif
+        guiGraphics.pose().translate((float) x, (float) y, (float) z);
     }
 
     public static void scale(float x, float y, float z) {
         ensureInitialized();
-        //#if MC >= 12106
-        guiGraphics.pose().scale(x, y);
-        //#elseif MC > 11904
-        //$$ guiGraphics.pose().scale(x, y, z);
-        //#else
-        //$$ poseStack.scale(x, y, z);
-        //#endif
+        guiGraphics.pose().scale(x, y, z);
     }
 
     // ==================== 纹理绘制 ====================
@@ -147,44 +95,19 @@ public class Render2DUtils {
     /**
      * 绘制完整纹理（纹理文件整体宽高与绘制区域一致）
      */
-    public static void drawTexture(Identifier texture, int x, int y, int width, int height) {
+    public static void drawTexture(ResourceLocation texture, int x, int y, int width, int height) {
         drawTexture(texture, x, y, 0, 0, width, height, width, height);
     }
 
     /**
      * 绘制纹理的指定区域（支持 UV 裁剪）
      */
-    public static void drawTexture(Identifier texture, int x, int y,
+    public static void drawTexture(ResourceLocation texture, int x, int y,
                                    int u, int v, int regionWidth, int regionHeight,
                                    int textureWidth, int textureHeight) {
         ensureInitialized();
 
-        //#if MC >= 12106
-        guiGraphics.blit(
-                RenderPipelines.GUI_TEXTURED,
-                texture,
-                x, y,
-                (float) u, (float) v,
-                regionWidth, regionHeight,
-                regionWidth, regionHeight,
-                textureWidth, textureHeight
-        );
-        //#elseif MC >= 12103
-        //$$ guiGraphics.blit(
-        //$$         RenderType::guiTextured,
-        //$$         texture,
-        //$$         x, y,
-        //$$         (float) u, (float) v,
-        //$$         regionWidth, regionHeight,
-        //$$         regionWidth, regionHeight,
-        //$$         textureWidth, textureHeight
-        //$$ );
-        //#elseif MC > 11904
-        //$$ guiGraphics.blit(texture, x, y, (float) u, (float) v, regionWidth, regionHeight, textureWidth, textureHeight);
-        //#else
-        //$$ RenderSystem.setShaderTexture(0, texture);
-        //$$ GuiComponent.blit(poseStack, x, y, u, v, regionWidth, regionHeight, textureWidth, textureHeight);
-        //#endif
+        guiGraphics.blit(texture, x, y, (float) u, (float) v, regionWidth, regionHeight, textureWidth, textureHeight);
     }
 
     // ==================== 物品绘制 ====================
@@ -194,15 +117,7 @@ public class Render2DUtils {
      */
     public static void drawItem(ItemStack stack, int x, int y) {
         ensureInitialized();
-        //#if MC > 12111
-        guiGraphics.fakeItem(stack, x, y);
-        //#elseif MC > 11904
-        //$$ guiGraphics.renderFakeItem(stack, x, y);
-        //#elseif MC > 11802
-        //$$ client.getItemRenderer().renderGuiItem(poseStack, stack, x, y);
-        //#else
-        //$$ client.getItemRenderer().renderGuiItem(stack, x, y);
-        //#endif
+        guiGraphics.renderFakeItem(stack, x, y);
     }
 
     /**
@@ -210,15 +125,7 @@ public class Render2DUtils {
      */
     public static void drawItemWithDecorations(ItemStack stack, int x, int y) {
         drawItem(stack, x, y);
-        //#if MC > 12111
-        guiGraphics.itemDecorations(client.font, stack, x, y);
-        //#elseif MC > 11904
-        //$$ guiGraphics.renderItemDecorations(client.font, stack, x, y);
-        //#elseif MC > 11802
-        //$$ client.getItemRenderer().renderGuiItemDecorations(poseStack, client.font, stack, x, y);
-        //#else
-        //$$ client.getItemRenderer().renderGuiItemDecorations(client.font, stack, x, y);
-        //#endif
+        guiGraphics.renderItemDecorations(client.font, stack, x, y);
     }
 
     // ==================== 组合绘制 ====================
@@ -234,7 +141,7 @@ public class Render2DUtils {
     /**
      * 纹理图标 + 右侧文字（可指定图标尺寸）
      */
-    public static void drawIconWithLabel(Identifier texture, int x, int y,
+    public static void drawIconWithLabel(ResourceLocation texture, int x, int y,
                                          int iconWidth, int iconHeight,
                                          String text, Color color, boolean shadow) {
         drawTexture(texture, x, y, iconWidth, iconHeight);

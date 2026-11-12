@@ -100,7 +100,7 @@ public final class QuickShulkerBridge {
 
     public static boolean handlePickBlock(LocalPlayer player, ItemStack stack) {
         if (player == null || stack == null || stack.isEmpty()
-                || ItemStack.isSameItemSameComponents(player.getMainHandItem(), stack)) {
+                || ItemStack.isSameItemSameTags(player.getMainHandItem(), stack)) {
             return false;
         }
         return handleMissingPickBlock(player, stack.getItem());

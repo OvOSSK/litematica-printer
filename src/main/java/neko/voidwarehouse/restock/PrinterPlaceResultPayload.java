@@ -1,10 +1,9 @@
 package neko.voidwarehouse.restock;
 
-//#if MC >= 12111
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import neko.compat.StreamCodec;
+import neko.compat.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 /** Shared with litematica-printer; keep both copies identical. */
 public record PrinterPlaceResultPayload(int nonce, int status) implements CustomPacketPayload {
@@ -16,7 +15,7 @@ public record PrinterPlaceResultPayload(int nonce, int status) implements Custom
     public static final int BAD_REQUEST = 5;
     public static final int STALE = 6;
     public static final Type<PrinterPlaceResultPayload> TYPE = new Type<>(
-            Identifier.fromNamespaceAndPath("carpet_neko_addition", "printer_place_result"));
+            new ResourceLocation("carpet_neko_addition", "printer_place_result"));
     public static final StreamCodec<FriendlyByteBuf, PrinterPlaceResultPayload> CODEC = new StreamCodec<>() {
         @Override
         public PrinterPlaceResultPayload decode(FriendlyByteBuf buf) {
@@ -36,4 +35,3 @@ public record PrinterPlaceResultPayload(int nonce, int status) implements Custom
     }
 }
 
-//#endif

@@ -78,7 +78,7 @@ final class BedrockPowerQuery {
         }
 
         @Override public int getHeight() { return this.level.getHeight(); }
-        @Override public int getMinY() { return this.level.getMinY(); }
+        @Override public int getMinBuildHeight() { return this.level.getMinBuildHeight(); }
 
         private boolean isOverridden(BlockPos pos) {
             return this.removedTorches.contains(pos) || pos.equals(this.replacementPos) || pos.equals(this.removedHead);

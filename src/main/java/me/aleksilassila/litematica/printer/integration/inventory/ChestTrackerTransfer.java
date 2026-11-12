@@ -6,7 +6,7 @@ import me.aleksilassila.litematica.printer.integration.containersync.ContainerSy
 import me.aleksilassila.litematica.printer.integration.quickshulker.QuickShulkerClicks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.ItemStack;
 
 /** A single server-confirmed take, or a cursor-safe two-click return. The provider owns the leases. */
@@ -37,7 +37,7 @@ final class ChestTrackerTransfer {
     void take(int slot) {
         requestedMenu = menu;
         revision = menu.getStateId();
-        QuickShulkerClicks.sendWithFullSync(menu, slot, 0, ContainerInput.QUICK_MOVE);
+        QuickShulkerClicks.sendWithFullSync(menu, slot, 0, ClickType.QUICK_MOVE);
     }
 
     void returnStack(int from, int to) {
@@ -56,7 +56,7 @@ final class ChestTrackerTransfer {
             public void click(int slot, int button) {
                 requestedMenu = menu;
                 revision = menu.getStateId();
-                QuickShulkerClicks.sendWithFullSync(menu, slots.get(slot), button, ContainerInput.PICKUP);
+                QuickShulkerClicks.sendWithFullSync(menu, slots.get(slot), button, ClickType.PICKUP);
             }
             public void refresh() { requestSnapshot(menu); }
             public boolean unchanged(List<ItemStack> items, ItemStack cursor) {

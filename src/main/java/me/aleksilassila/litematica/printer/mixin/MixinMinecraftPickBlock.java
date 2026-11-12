@@ -18,11 +18,7 @@ import net.minecraft.world.phys.BlockHitResult;
 @Mixin(value = Minecraft.class, priority = 1100)
 public abstract class MixinMinecraftPickBlock {
 
-    //#if MC > 260100
-    @Inject(method = "pickBlockOrEntity", at = @At("HEAD"), cancellable = true)
-    //#else
-    //$$ @Inject(method = "pickBlock", at = @At("HEAD"), cancellable = true)
-    //#endif
+    @Inject(method = "pickBlock", at = @At("HEAD"), cancellable = true)
     private void litematica_printer$pickRealBlock(CallbackInfo ci) {
         Minecraft client = (Minecraft) (Object) this;
         if (client.level == null

@@ -2,7 +2,7 @@ package me.aleksilassila.litematica.printer.utils.minecraft;
 
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.util.Util;
+import net.minecraft.Util;
 
 @SuppressWarnings("SpellCheckingInspection")
 public class DirectionUtils {
@@ -35,11 +35,7 @@ public class DirectionUtils {
     }
 
     public static Vec3i getVector(Direction direction) {
-        //#if MC >= 12103
-        return direction.getUnitVec3i();
-        //#else
-        //$$ return direction.getNormal();
-        //#endif
+        return direction.getNormal();
     }
 
     public static float sin(double d) {

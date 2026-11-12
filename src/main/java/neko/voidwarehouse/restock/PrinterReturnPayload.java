@@ -1,12 +1,11 @@
 package neko.voidwarehouse.restock;
 
-//#if MC >= 12111
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import neko.compat.ByteBufCodecs;
+import neko.compat.StreamCodec;
+import neko.compat.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.List;
 
@@ -38,7 +37,7 @@ public record PrinterReturnPayload(int nonce, List<Integer> slots) implements Cu
     /** 唯一的返还通道：{@code carpet_neko_addition:printer_return}（C2S）。 */
     public static final CustomPacketPayload.Type<PrinterReturnPayload> TYPE =
             new CustomPacketPayload.Type<>(
-                    Identifier.fromNamespaceAndPath("carpet_neko_addition", "printer_return"));
+                    new ResourceLocation("carpet_neko_addition", "printer_return"));
 
     /**
      * 一次最多带几个槽位。
@@ -70,4 +69,4 @@ public record PrinterReturnPayload(int nonce, List<Integer> slots) implements Cu
         return TYPE;
     }
 }
-//#endif
+

@@ -10,13 +10,8 @@ import me.aleksilassila.litematica.printer.utils.FilterUtils;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-//#if MC >= 260300
-//$$ import net.minecraft.core.component.DataComponents;
-//$$ import net.minecraft.core.registries.BuiltInRegistries;
-//#else
 import net.minecraft.world.level.ItemLike;
 import java.util.Arrays;
-//#endif
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,20 +59,7 @@ public class ComposterGuide extends Guide {
     }
 
     private static Item[] getCompostableItems() {
-        //#if MC >= 260300
-        //$$ List<Item> items = new ArrayList<>();
-        //$$ var holders = BuiltInRegistries.ITEM.listElements().iterator();
-        //$$ while (holders.hasNext()) {
-        //$$     var holder = holders.next();
-        //$$     // Check readiness explicitly; do not swallow component/linkage errors or use
-        //$$     // a partial candidate list while server data is still being bound.
-        //$$     if (!holder.areComponentsBound()) return new Item[0];
-        //$$     if (holder.components().has(DataComponents.COMPOSTABLE)) items.add(holder.value());
-        //$$ }
-        //$$ return items.toArray(Item[]::new);
-        //#else
         return Arrays.stream(ComposterBlock.COMPOSTABLES.keySet().toArray(ItemLike[]::new))
                 .map(ItemLike::asItem).toArray(Item[]::new);
-        //#endif
     }
 }

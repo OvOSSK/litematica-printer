@@ -22,7 +22,7 @@ public class SoilGuide extends Guide {
 
     @Override
     protected Result onBuildActionMissingBlock(BlockMatchResult state) {
-        if (requiredBlock instanceof net.minecraft.world.level.block.FarmlandBlock) {
+        if (requiredBlock instanceof net.minecraft.world.level.block.FarmBlock) {
             return Result.success(new Action().setItems(
                     Items.DIRT, Items.GRASS_BLOCK, Items.COARSE_DIRT));
         }
@@ -36,7 +36,7 @@ public class SoilGuide extends Guide {
 
     @Override
     protected Result onBuildActionWrongBlock(BlockMatchResult state) {
-        if (requiredBlock instanceof net.minecraft.world.level.block.FarmlandBlock) {
+        if (requiredBlock instanceof net.minecraft.world.level.block.FarmBlock) {
             Block[] soilBlocks = {Blocks.GRASS_BLOCK, Blocks.DIRT, Blocks.DIRT_PATH, Blocks.COARSE_DIRT};
             for (Block soilBlock : soilBlocks) {
                 if (currentBlock.equals(soilBlock)) {
@@ -56,11 +56,7 @@ public class SoilGuide extends Guide {
     }
 
     private boolean isDirtPath() {
-        //#if MC >= 260300
-        //$$ return requiredBlock instanceof net.minecraft.world.level.block.PathBlock;
-        //#else
         return requiredBlock instanceof net.minecraft.world.level.block.DirtPathBlock;
-        //#endif
     }
 
     @Override

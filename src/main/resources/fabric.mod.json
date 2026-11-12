@@ -1,9 +1,9 @@
 {
   "schemaVersion": 1,
-  "id": "${mod_id}",
-  "version": "${mod_version}",
+  "id": "litematica-printer",
+  "version": "0.7.2.1-hana-neko.1",
   "icon": "assets/litematica-printer/icon.png",
-  "name": "${mod_name}",
+  "name": "Litematica Printer Hana (1.20.1 port)",
   "description": "An extension for Litematica that adds the missing printer functionality.",
   "authors": [
     "aleksilassila",
@@ -12,11 +12,11 @@
     "bunnyi116"
   ],
   "contact": {
-    "website": "${mod_homepage}",
-    "homepage": "${mod_sources}",
-    "sources": "${mod_sources}"
+    "website": "https://github.com/Yur1Ca/litematica-printer",
+    "homepage": "https://github.com/Yur1Ca/litematica-printer",
+    "sources": "https://github.com/OvOSSK/litematica-printer/tree/fabric-1.20.1"
   },
-  "license": "${mod_license}",
+  "license": "AGPL-3.0",
   "environment": "client",
   "entrypoints": {
     "main": [
@@ -36,16 +36,20 @@
     "litematica-printer.optional.mixins.json"
   ],
   "depends": {
-    "minecraft": "${minecraft_dependency}",
-    "malilib": ">=${malilib}",
-    "litematica": ">=${litematica}",
+    "minecraft": "1.20.1",
+    "malilib": ">=0.16.3",
+    "litematica": ">=0.15.4",
     "fabric-api": "*",
-    "fabric-content-registries-v0": "*"
+    "fabric-content-registries-v0": "*",
+    "java": ">=17",
+    "fabricloader": ">=0.16.14"
   },
   "custom": {
     "modmenu": {
-      "parent": "${mod_wrapper_id}"
+      "parent": "litematica-printer-wrapper"
     }
-  }
+  },
+  "contributors": [
+    "OvOSSK (Fabric 1.20.1 port and Neko warehouse integration backport)"
+  ]
 }
-

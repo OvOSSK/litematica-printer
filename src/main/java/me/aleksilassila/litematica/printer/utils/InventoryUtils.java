@@ -19,7 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.protocol.game.ServerboundSetCarriedItemPacket;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerInput;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -37,27 +37,15 @@ public class InventoryUtils {
     private static final Minecraft client = Minecraft.getInstance();
     private static final int OFFHAND_SLOT_INDEX = 40;
     public static int getSelectedSlot(Inventory inventory) {
-        //#if MC > 12104
-        return inventory.getSelectedSlot();
-        //#else
-        //$$ return inventory.selected;
-        //#endif
+        return inventory.selected;
     }
 
     public static void setSelectedSlot(Inventory inventory, int slot) {
-        //#if MC > 12101
-        inventory.setSelectedSlot(slot);
-        //#else
-        //$$ inventory.selected = slot;
-        //#endif
+        inventory.selected = slot;
     }
 
     public static NonNullList<ItemStack> getMainStacks(Inventory inventory) {
-        //#if MC > 12104
-        return inventory.getNonEquipmentItems();
-        //#else
-        //$$ return inventory.items;
-        //#endif
+        return inventory.items;
     }
 
     public static boolean playerHasAccessToItem(LocalPlayer playerEntity, Item item) {
@@ -208,11 +196,7 @@ public class InventoryUtils {
         Player player = mc.player;
         if (player == null || player.containerMenu != player.inventoryMenu) return false;
 
-        //#if MC > 12004
-        boolean b = !VoidWarehouseTriggerItem.isTrigger(player.getMainHandItem()) && areStacksEqualIgnoreNbt(stackReference, player.getMainHandItem());
-        //#else
-        //$$ boolean b = !VoidWarehouseTriggerItem.isTrigger(player.getMainHandItem()) && areStacksEqual(stackReference, player.getMainHandItem());
-        //#endif
+        boolean b = !VoidWarehouseTriggerItem.isTrigger(player.getMainHandItem()) && areStacksEqual(stackReference, player.getMainHandItem());
         if (b) {
             return false;
         }
@@ -223,7 +207,7 @@ public class InventoryUtils {
                 return false;
             }
             int currentHotbarSlot = getSelectedSlot(player.getInventory());
-            client.gameMode.handleContainerInput(player.inventoryMenu.containerId, slot, currentHotbarSlot, ContainerInput.SWAP, player);
+            client.gameMode.handleInventoryMouseClick(player.inventoryMenu.containerId, slot, currentHotbarSlot, ClickType.SWAP, player);
             return true;
         }
         return false;
@@ -272,11 +256,11 @@ public class InventoryUtils {
         if (client.gameMode == null) {
             return false;
         }
-        client.gameMode.handleContainerInput(
+        client.gameMode.handleInventoryMouseClick(
                 player.inventoryMenu.containerId,
                 sourceSlot,
                 OFFHAND_SLOT_INDEX,
-                ContainerInput.SWAP,
+                ClickType.SWAP,
                 player
         );
 

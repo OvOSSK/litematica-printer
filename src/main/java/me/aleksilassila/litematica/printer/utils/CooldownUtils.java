@@ -2,7 +2,7 @@ package me.aleksilassila.litematica.printer.utils;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -50,7 +50,7 @@ public final class CooldownUtils implements RuntimeComponent {
      */
     public void setCooldown(ClientLevel level, String type, BlockPos pos, int cooldownTicks) {
         if (cooldownTicks <= 0) return;
-        Identifier dimension = level.dimension().identifier();
+        ResourceLocation dimension = level.dimension().location();
         Info key = new Info(dimension, type, pos);
         cooldownMap.put(key, cooldownTicks);
     }
@@ -61,7 +61,7 @@ public final class CooldownUtils implements RuntimeComponent {
      * @return true=冷却中，false=未冷却/无冷却
      */
     public boolean isOnCooldown(ClientLevel level, String type, BlockPos pos) {
-        Identifier dimension = level.dimension().identifier();
+        ResourceLocation dimension = level.dimension().location();
         Info key = new Info(dimension, type, pos);
         return cooldownMap.containsKey(key);
     }
@@ -70,7 +70,7 @@ public final class CooldownUtils implements RuntimeComponent {
      * 手动移除指定方块的冷却（强制取消冷却）
      */
     public void removeCooldown(ClientLevel level, String type, BlockPos pos) {
-        Identifier dimension = level.dimension().identifier();
+        ResourceLocation dimension = level.dimension().location();
         Info key = new Info(dimension, type, pos);
         cooldownMap.remove(key);
     }
@@ -81,7 +81,7 @@ public final class CooldownUtils implements RuntimeComponent {
      * @return 剩余冷却刻数，未冷却则返回0
      */
     public int getRemainingCooldown(ClientLevel level, String type, BlockPos pos) {
-        Identifier dimension = level.dimension().identifier();
+        ResourceLocation dimension = level.dimension().location();
         Info key = new Info(dimension, type, pos);
         return cooldownMap.getOrDefault(key, 0);
     }
@@ -90,7 +90,7 @@ public final class CooldownUtils implements RuntimeComponent {
      * 清空指定维度的所有冷却数据
      */
     public void clearDimensionCooldowns(ClientLevel level) {
-        Identifier dimension = level.dimension().identifier();
+        ResourceLocation dimension = level.dimension().location();
         cooldownMap.keySet().removeIf(info -> info.dimension.equals(dimension));
     }
 
@@ -98,7 +98,7 @@ public final class CooldownUtils implements RuntimeComponent {
      * 清空指定维度+指定类型的所有冷却数据（如清空某维度所有打印冷却）
      */
     public void clearTypeCooldowns(ClientLevel level, String type) {
-        Identifier dimension = level.dimension().identifier();
+        ResourceLocation dimension = level.dimension().location();
         cooldownMap.keySet().removeIf(info -> info.dimension.equals(dimension) && info.type.equals(type));
     }
 
@@ -113,12 +113,12 @@ public final class CooldownUtils implements RuntimeComponent {
 
     @SuppressWarnings("ClassCanBeRecord")
     private static final class Info {
-        private final Identifier dimension;
+        private final ResourceLocation dimension;
         private final String type;
         private final BlockPos pos;
 
-        private Info(Identifier dimension, String type, BlockPos pos) {
-            this.dimension = Objects.requireNonNull(dimension, "Dimension Identifier cannot be null!");
+        private Info(ResourceLocation dimension, String type, BlockPos pos) {
+            this.dimension = Objects.requireNonNull(dimension, "Dimension ResourceLocation cannot be null!");
             this.type = Objects.requireNonNull(type, "Cool down type cannot be null!");
             this.pos = Objects.requireNonNull(pos, "BlockPos cannot be null!");
         }

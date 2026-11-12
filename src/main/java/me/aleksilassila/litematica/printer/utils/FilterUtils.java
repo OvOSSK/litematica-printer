@@ -311,7 +311,7 @@ public class FilterUtils {
         }
 
         // 直接处理Block类型的TagKey流，无类型转换
-        Stream<TagKey<Block>> blockTagStream = blockState.tags();
+        Stream<TagKey<Block>> blockTagStream = blockState.getTags();
         return blockTagStream
                 .map(tag -> tag.location().toString())
                 .anyMatch(tagFullName -> matchTagName(tagFullName, tagName, matchRules));
@@ -326,7 +326,7 @@ public class FilterUtils {
         }
         // 物品标签和方块标签是两套注册表标签。铺盖等方块材料通常
         // 使用方块标签配置，但实际切换材料时拿到的是 BlockItem，二者都要匹配。
-        boolean itemTagMatched = itemStack.tags()
+        boolean itemTagMatched = itemStack.getTags()
                 .map(tag -> tag.location().toString())
                 .anyMatch(tagFullName -> matchTagName(tagFullName, tagName, matchRules));
         if (itemTagMatched) {
@@ -335,7 +335,7 @@ public class FilterUtils {
         if (!(itemStack.getItem() instanceof BlockItem blockItem)) {
             return false;
         }
-        return blockItem.getBlock().defaultBlockState().tags()
+        return blockItem.getBlock().defaultBlockState().getTags()
                 .map(tag -> tag.location().toString())
                 .anyMatch(tagFullName -> matchTagName(tagFullName, tagName, matchRules));
     }

@@ -12,12 +12,6 @@ import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-//#if MC >= 260300
-//$$ import net.minecraft.tags.BlockTags;
-//#endif
-//#if MC >= 12111
-import net.minecraft.world.attribute.EnvironmentAttributes;
-//#endif
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.IceBlock;
@@ -276,24 +270,12 @@ public final class WaterPrintTask implements PrintTask {
 
     @SuppressWarnings("deprecation")
     private static boolean canIceBecomeWaterSource(ClientLevel level, BlockPos pos) {
-        //#if MC >= 12111
-        if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
-        //#else
-        //$$ if (level.dimensionType().ultraWarm()) {
-        //#endif
+        if (level.dimensionType().ultraWarm()) {
             return false;
         }
         // Match IceBlock.playerDestroy: collision and contained fluid do not imply water support.
         BlockState belowState = level.getBlockState(pos.below());
-        //#if MC >= 260300
-        //$$ return belowState.is(BlockTags.ICE_MELTS_WHEN_DESTROYED_ABOVE) || belowState.liquid();
-        //#else
-        //#if MC > 11904
         return belowState.blocksMotion() || belowState.liquid();
-        //#else
-        //$$ return belowState.getMaterial().blocksMotion() || belowState.getMaterial().isLiquid();
-        //#endif
-        //#endif
     }
 
     private static boolean shouldSkipWaterloggedTarget(BlockState requiredState) {

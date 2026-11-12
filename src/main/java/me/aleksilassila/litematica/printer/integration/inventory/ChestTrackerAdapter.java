@@ -41,13 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-//#if MC >= 12104
-import red.jackf.chesttracker.api.memory.Memory;
-import red.jackf.chesttracker.api.memory.MemoryBank;
-import red.jackf.chesttracker.api.memory.MemoryKey;
-import red.jackf.chesttracker.api.memory.MemoryBankAccess;
-import red.jackf.chesttracker.api.providers.ProviderUtils;
-//#endif
 
 /** Optional Chest Tracker world-container material provider. */
 public final class ChestTrackerAdapter implements InventoryProvider, RuntimeComponent {
@@ -362,11 +355,7 @@ public final class ChestTrackerAdapter implements InventoryProvider, RuntimeComp
         if (current == this.client.player.inventoryMenu) screen = new InventoryScreen(this.client.player);
         if (screen == null || screen.getMenu() != current) return;
         this.recoveryShownMenu = current;
-        //#if MC > 260100
-        //$$ this.client.gui.setScreen(screen);
-        //#else
         this.client.setScreen(screen);
-        //#endif
     }
 
     @Override
@@ -385,22 +374,6 @@ public final class ChestTrackerAdapter implements InventoryProvider, RuntimeComp
         List<me.aleksilassila.litematica.printer.printer.PrinterBox> boxes = LitematicaUtils.createSelection1Boxes();
         if (boxes.isEmpty()) return 0;
         int added = 0;
-        //#if MC >= 12104
-        MemoryBank bank = MemoryBankAccess.INSTANCE.getLoaded().orElse(null);
-        var key = ProviderUtils.getPlayersCurrentKey().orElse(null);
-        MemoryKey memoryKey = bank == null || key == null ? null : bank.getKey(key).orElse(null);
-        if (memoryKey != null) {
-            String world = SelectedContainerCache.worldId(this.client);
-            String dimension = SelectedContainerCache.dimensionId(this.client);
-            for (Map.Entry<BlockPos, Memory> entry : memoryKey.getMemories().entrySet()) {
-                Memory memory = entry.getValue();
-                BlockPos pos = entry.getKey();
-                if (memory != null && memory.container().isPresent() && insideAny(boxes, pos)) {
-                    added += this.selectedContainers.add(world, dimension, pos);
-                }
-            }
-        }
-        //#endif
         if (added > 0) this.selectedContainers.save();
         return added;
     }
@@ -673,7 +646,7 @@ public final class ChestTrackerAdapter implements InventoryProvider, RuntimeComp
         if (stack == null || stack.isEmpty()) return false;
         if (this.activeRequest != null && !this.activeRequest.acceptsStack(stack)) return false;
         return this.exactMatch
-                ? ItemStack.isSameItemSameComponents(stack, this.requestedStack)
+                ? ItemStack.isSameItemSameTags(stack, this.requestedStack)
                 : this.requestedItems.contains(stack.getItem());
     }
 
@@ -806,46 +779,6 @@ public final class ChestTrackerAdapter implements InventoryProvider, RuntimeComp
 
     private void rebuildIndex() {
         this.index.clear();
-        //#if MC >= 12104
-        MemoryBank bank = MemoryBankAccess.INSTANCE.getLoaded().orElse(null);
-        var key = ProviderUtils.getPlayersCurrentKey().orElse(null);
-        if (bank == null || key == null) return;
-        MemoryKey memoryKey = bank.getKey(key).orElse(null);
-        if (memoryKey == null) return;
-        String world = SelectedContainerCache.worldId(this.client);
-        String dimension = SelectedContainerCache.dimensionId(this.client);
-        int candidateCount = 0;
-        for (Map.Entry<BlockPos, Memory> entry : memoryKey.getMemories().entrySet()) {
-            if (candidateCount >= MAX_SCAN_CANDIDATES) break;
-            BlockPos pos = entry.getKey();
-            Memory memory = entry.getValue();
-            if (memory == null || memory.container().isEmpty()
-                    || !this.selectedContainers.contains(world, dimension, pos)
-                    || this.client.level == null || !this.client.level.isLoaded(pos)) continue;
-            double distance = this.client.player == null ? 0.0D : this.client.player.distanceToSqr(Vec3.atCenterOf(pos));
-            long timestamp = memory.inGameTimestamp() == null ? Long.MIN_VALUE : memory.inGameTimestamp();
-            for (Item requested : this.requestedItems) {
-                if (candidateCount >= MAX_SCAN_CANDIDATES) break;
-                boolean direct = false;
-                boolean nested = false;
-                for (ItemStack stack : memory.items()) {
-                    if (stack.isEmpty()) continue;
-                    if (stack.is(requested)) {
-                        direct = true;
-                        break;
-                    }
-                    if (isShulker(stack) && shulkerContains(stack, requested)) {
-                        nested = true;
-                    }
-                }
-                if (direct || nested) {
-                    this.index.computeIfAbsent(requested, ignored -> new ArrayList<>())
-                            .add(new Candidate(pos, !direct, distance, timestamp));
-                    candidateCount++;
-                }
-            }
-        }
-        //#endif
     }
 
     private List<Candidate> orderedCandidates(List<Item> items) {

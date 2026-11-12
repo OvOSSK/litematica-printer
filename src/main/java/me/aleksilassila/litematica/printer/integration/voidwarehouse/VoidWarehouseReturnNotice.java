@@ -1,12 +1,11 @@
 package me.aleksilassila.litematica.printer.integration.voidwarehouse;
 
-//#if MC >= 12111
 import me.aleksilassila.litematica.printer.utils.minecraft.MessageUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
@@ -115,12 +114,12 @@ public final class VoidWarehouseReturnNotice {
         if (itemId == null || itemId.isEmpty()) {
             return null;
         }
-        Identifier id = Identifier.tryParse(itemId);
+        ResourceLocation id = ResourceLocation.tryParse(itemId);
         if (id == null) {
             return null;
         }
         try {
-            Item item = BuiltInRegistries.ITEM.getValue(id);
+            Item item = BuiltInRegistries.ITEM.get(id);
             // DefaultedRegistry 认不出来时给的是 AIR —— 那个名字是「空气」，不如报 id
             return item == null || item == net.minecraft.world.item.Items.AIR ? null : item;
         } catch (RuntimeException ignored) {
@@ -151,4 +150,3 @@ public final class VoidWarehouseReturnNotice {
         return String.format(Locale.ROOT, "%,d", value);
     }
 }
-//#endif

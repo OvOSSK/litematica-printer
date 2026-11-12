@@ -1,11 +1,9 @@
 package neko.voidwarehouse.restock;
 
-//#if MC >= 12111
-
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.Identifier;
+import neko.compat.StreamCodec;
+import neko.compat.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -18,7 +16,7 @@ public record PrinterPlaceStatePayload(PrinterPlacePayload placement, String blo
     public static final int MAX_PROPERTY_NAME_LENGTH = 64;
     public static final int MAX_PROPERTY_VALUE_LENGTH = 128;
     public static final Type<PrinterPlaceStatePayload> TYPE = new Type<>(
-            Identifier.fromNamespaceAndPath("carpet_neko_addition", "printer_place_state_v1"));
+            new ResourceLocation("carpet_neko_addition", "printer_place_state_v1"));
     public static final StreamCodec<FriendlyByteBuf, PrinterPlaceStatePayload> CODEC = new StreamCodec<>() {
         @Override
         public PrinterPlaceStatePayload decode(FriendlyByteBuf buf) {
@@ -58,4 +56,3 @@ public record PrinterPlaceStatePayload(PrinterPlacePayload placement, String blo
     }
 }
 
-//#endif

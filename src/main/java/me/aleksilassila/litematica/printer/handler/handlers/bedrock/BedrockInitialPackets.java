@@ -120,20 +120,13 @@ final class BedrockInitialPackets {
     }
 
     private static Map<BlockPos, Receipt> receipts(List<BedrockPlacer.PistonRequest> accepted, List<Packet<?>> packets) {
-        //#if MC > 11802
         var pistons = new LinkedHashMap<BlockPos, Integer>();
         var torches = new LinkedHashMap<BlockPos, Integer>();
         for (var packet : packets) {
             if (!(packet instanceof ServerboundUseItemOnPacket use)) continue;
-            //#if MC >= 260300
-            //$$ var hand = use.hand();
-            //$$ var hit = use.hitResult();
-            //$$ int sequence = use.sequence();
-            //#else
             var hand = use.getHand();
             var hit = use.getHitResult();
             int sequence = use.getSequence();
-            //#endif
             (hand == InteractionHand.OFF_HAND ? pistons : torches)
                     .put(hit.getBlockPos().relative(hit.getDirection()).immutable(), sequence);
         }
@@ -149,9 +142,6 @@ final class BedrockInitialPackets {
                     new Receipt(request.pistonPos().immutable(), frozen, action, piston, torch));
         }
         return Map.copyOf(receipts);
-        //#else
-        //$$ return Map.of();
-        //#endif
     }
 
     private static int findTorchSlot(LocalPlayer player, BedrockInventorySession inventory) {
@@ -209,11 +199,7 @@ final class BedrockInitialPackets {
         packets.add(new ServerboundSetCarriedItemPacket(torchSlot));
         for (var hit : torches) {
             var use = NetworkUtils.createPacket(sequence -> {
-                //#if MC > 11802
                 return new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, hit, sequence);
-                //#else
-                //$$ return new ServerboundUseItemOnPacket(InteractionHand.MAIN_HAND, hit);
-                //#endif
             });
             if (use == null) return List.of();
             packets.add(use);
@@ -237,11 +223,7 @@ final class BedrockInitialPackets {
                 lastLook = look;
             }
             var use = NetworkUtils.createPacket(sequence -> {
-                //#if MC > 11802
                 return new ServerboundUseItemOnPacket(InteractionHand.OFF_HAND, placement.hit(), sequence);
-                //#else
-                //$$ return new ServerboundUseItemOnPacket(InteractionHand.OFF_HAND, placement.hit());
-                //#endif
             });
             if (use == null) return List.of();
             packets.add(use);
