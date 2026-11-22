@@ -196,7 +196,7 @@ public class InventoryUtils {
         Player player = mc.player;
         if (player == null || player.containerMenu != player.inventoryMenu) return false;
 
-        boolean b = !VoidWarehouseTriggerItem.isTrigger(player.getMainHandItem()) && areStacksEqual(stackReference, player.getMainHandItem());
+        boolean b = !VoidWarehouseTriggerItem.isTrigger(player.getMainHandItem()) && ItemStack.isSameItemSameTags(stackReference, player.getMainHandItem());
         if (b) {
             return false;
         }

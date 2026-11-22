@@ -1,8 +1,6 @@
 # Litematica Printer — Hana
 
-This update backports the warehouse inventory fallback fix and shares compatible networking with Neko Client 0.5.9. The base remains `old`; the new `master` UI and mining redesign are not included.
-
-> **1.20.1 Fabric port by OvOSSK.** Based on [Hana](https://github.com/Yur1Ca/litematica-printer)'s old branch, with Void Warehouse support backported.
+> **Minecraft 1.20.1 Fabric port by OvOSSK.** Updated to [Hana master ec205cd](https://github.com/Yur1Ca/litematica-printer/commit/ec205cdd9a9dd3da20b706c0f08b8d93aa451af7), including the settings workspace, operation highlights, scan cache and mining tool switching, with Void Warehouse support.
 > See [PORT-NOTICE.txt](PORT-NOTICE.txt) for changes. Original credits and license are below.
 
 **English** | [简体中文](README.zh-CN.md)
@@ -30,12 +28,12 @@ Required:
 
 - [Fabric Loader](https://fabricmc.net/) 0.16.14+
 - [Fabric API](https://modrinth.com/mod/fabric-api) (1.20.1)
-- [MaLiLib](https://modrinth.com/mod/malilib) 0.16.3
+- [MaLiLib](https://modrinth.com/mod/malilib) 0.16.3 (tested)
 - [Litematica](https://modrinth.com/mod/litematica) 0.15.4
 
 Optional integrations:
 
-- [Tweakeroo](https://modrinth.com/mod/tweakeroo)
+- [Tweakeroo](https://modrinth.com/mod/tweakeroo) 0.17.1 (tested)
 - [Quick Shulker](https://github.com/MoRanpcy/quickshulker)
 - [Take It Out](https://modrinth.com/mod/takeitout), on supported 1.21.x and 26.x versions
 - [Chest Tracker](https://github.com/ponuing/ChestTracker), on versions with a matching upstream build

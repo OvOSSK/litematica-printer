@@ -1,5 +1,5 @@
 plugins { id 'fabric-loom' version '1.5.8' }
-version='0.7.2.1-hana-neko.2'
+version='0.7.2.1-hana-neko.3'
 group='me.aleksilassila'
 base { archivesName='litematica-printer-hana-mc1.20.1' }
 repositories {

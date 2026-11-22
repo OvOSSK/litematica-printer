@@ -27,10 +27,21 @@ public class NetworkUtils {
         return scope;
     }
 
+    public static UseItemOnSend trackUseItem(Object connection, InteractionHand hand) {
+        UseItemOnSend scope = new UseItemOnSend(connection, hand, null, ACTIVE_USE_ITEM_ON.get());
+        ACTIVE_USE_ITEM_ON.set(scope);
+        return scope;
+    }
+
     public static void observeUseItemOn(Object connection, Packet<?> packet) {
-        if (!(packet instanceof ServerboundUseItemOnPacket use)) return;
         UseItemOnSend scope = ACTIVE_USE_ITEM_ON.get();
         if (scope == null || scope.connection != connection) return;
+        if (packet instanceof net.minecraft.network.protocol.game.ServerboundUseItemPacket itemUse) {
+            if (scope.hit != null) return;
+            if (scope.hand == itemUse.getHand()) { scope.sent = true; scope.sequence = itemUse.getSequence(); }
+            return;
+        }
+        if (!(packet instanceof ServerboundUseItemOnPacket use) || scope.hit == null) return;
         InteractionHand hand = use.getHand();
         BlockHitResult hit = use.getHitResult();
         if (scope.hand == hand && scope.hit.getBlockPos().equals(hit.getBlockPos())

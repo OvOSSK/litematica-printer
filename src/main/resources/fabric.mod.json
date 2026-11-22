@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "litematica-printer",
-  "version": "0.7.2.1-hana-neko.2",
+  "version": "0.7.2.1-hana-neko.3",
   "icon": "assets/litematica-printer/icon.png",
   "name": "Litematica Printer Hana (1.20.1 port)",
   "description": "An extension for Litematica that adds the missing printer functionality.",

@@ -1,8 +1,6 @@
 # Litematica Printer — Hana
 
-本次补入上游的仓库缺料回退背包修复，并适配 Neko Client 0.5.9 的共用通信。仍基于 `old` 分支，未合入 `master` 的新界面和挖掘重构。
-
-> **1.20.1 Fabric 版**，由 OvOSSK 移植。基于 [Hana](https://github.com/Yur1Ca/litematica-printer) 的 old 分支，补上虚空仓库联动。
+> **Minecraft 1.20.1 Fabric 移植版，由 OvOSSK 维护。** 本版跟进 [Hana 主分支 ec205cd](https://github.com/Yur1Ca/litematica-printer/commit/ec205cdd9a9dd3da20b706c0f08b8d93aa451af7)，加入新版设置界面、操作高亮、扫描缓存和挖掘换工具逻辑，支持虚空仓库联动。
 > 原作者及许可见文末，修改记录见 [PORT-NOTICE.txt](PORT-NOTICE.txt)。
 
 [English](README.md) | **简体中文**
@@ -30,12 +28,12 @@ Litematica Printer — Hana 是一个客户端 Fabric 模组，为 Litematica �
 
 - [Fabric Loader](https://fabricmc.net/) 0.16.14+
 - [Fabric API](https://modrinth.com/mod/fabric-api) (1.20.1)
-- [MaLiLib](https://modrinth.com/mod/malilib) 0.16.3
+- [MaLiLib](https://modrinth.com/mod/malilib) 0.16.3（实测）
 - [Litematica](https://modrinth.com/mod/litematica) 0.15.4
 
 可选联动：
 
-- [Tweakeroo](https://modrinth.com/mod/tweakeroo)
+- [Tweakeroo](https://modrinth.com/mod/tweakeroo) 0.17.1（实测）
 - [Quick Shulker](https://github.com/MoRanpcy/quickshulker)
 - [Take It Out](https://modrinth.com/mod/takeitout)，仅用于受支持的 1.21.x 和 26.x 版本
 - [Chest Tracker](https://github.com/ponuing/ChestTracker)，仅用于有对应版本构建的 1.21.4+ 和 26.x 版本

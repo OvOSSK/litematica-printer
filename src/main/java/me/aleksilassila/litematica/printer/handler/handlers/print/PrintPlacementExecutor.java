@@ -241,7 +241,12 @@ public final class PrintPlacementExecutor {
         if (hitModifier != null) {
             this.actionBroker.useProtocolHitModifier(hitModifier);
         }
-        this.actionBroker.setLook(adjustHorizontalLook(action.getPlayerLook(), context));
+        if (action.requiresExactLook()) {
+            this.actionBroker.setWaitForHorizontalLook(false);
+            this.actionBroker.setLook(action.getPlayerLook());
+        } else {
+            this.actionBroker.setLook(adjustHorizontalLook(action.getPlayerLook(), context));
+        }
         this.actionBroker.setNeedWaitModifyLookFromAction(action.isNeedWaitModifyLook());
         boolean consumedEffectiveExecution = action.isConsumeEffectiveExecution();
         int cooldownTicks = action.getCooldownTicksOverride() >= 0
@@ -347,6 +352,10 @@ public final class PrintPlacementExecutor {
             Action action,
             @Nullable PrintTaskAction taskAction
     ) {
+        me.aleksilassila.litematica.printer.render.OperationHighlights.emit(context.blockPos,
+                action instanceof me.aleksilassila.litematica.printer.printer.action.ClickAction
+                        ? me.aleksilassila.litematica.printer.enums.HighlightType.ADJUST
+                        : me.aleksilassila.litematica.printer.enums.HighlightType.PLACE);
         if (context.requiredState.getBlock() instanceof SignBlock) {
             this.actionBroker.confirmPrintSignEditSent(context.blockPos);
         }

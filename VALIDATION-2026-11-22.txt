@@ -27,3 +27,11 @@ and remote multiplayer were not exhaustively exercised in this update.
 A development-only remapping collision in MaLiLib's text field caused recursive
 cursor calls; the same recipe screen works with the final production JARs.
 Hana remains based on old; master UI/mining redesign is not part of this release.
+
+hana-neko.3 (supersedes the Hana results above)
+112 JUnit tests passed, including layout, highlight history, construction cursors,
+trench filling, candidate eviction and section coverage. Remapped release JAR ran
+with Neko 1.0.18 and Neko Client 0.5.9. A survival player with a nearly broken
+diamond pick switched to a healthy iron pick for stone. All 11 workspace pages
+opened in a copied singleplayer world, which saved and closed normally.
+Large construction jobs, multiplayer and extended bedrock runs remain untested.

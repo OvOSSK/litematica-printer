@@ -32,3 +32,9 @@ Backported upstream commit 8707bb1b8cdb3e186d453e5e60a9cb12c5703f51
 Updated shared network codecs for Neko Client 0.5.9 and qualified pick-block
 injection descriptors. The old-branch base is unchanged; this release does
 not include the new master-branch UI or mining redesign.
+
+2026-11-22 / hana-neko.3, OvOSSK
+Ported Hana master functionality through ec205cdd9a9dd3da20b706c0f08b8d93aa451af7
+to Minecraft 1.20.1. Adapted the workspace UI, highlight rendering, mining
+protection, construction scanning and placement to Java 17, MaLiLib 0.16.3,
+Litematica 0.15.4 and legacy inventory NBT. Leaf litter has no 1.20.1 block.

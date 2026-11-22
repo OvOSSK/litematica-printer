@@ -32,6 +32,7 @@ public final class PrinterConfigOptions {
         @Override public String getComment() { return comment(this, super.getComment()); }
     }
 
+
     public static final class IntegerOption extends ConfigInteger {
         public IntegerOption(String name, int value, int min, int max, boolean slider, String comment) {
             super(name, value, min, max, slider, comment);

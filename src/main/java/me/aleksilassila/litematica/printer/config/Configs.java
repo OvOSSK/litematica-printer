@@ -54,6 +54,7 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
         optionSet.addAll(Cover.OPTIONS);          // 铺盖
         optionSet.addAll(Fluid.OPTIONS);          // 排流体
         optionSet.addAll(Bedrock.OPTIONS);        // 破基岩
+        optionSet.addAll(Highlight.OPTIONS);
         OPTIONS = ImmutableList.copyOf(optionSet);
 
         List<IHotkey> hotkeys = new ArrayList<>();
@@ -63,6 +64,22 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
             }
         }
         HOTKEYS = ImmutableList.copyOf(hotkeys);
+    }
+
+    /** Operation colors/styles adapted from BiliXWhite/litematica-printer@6cef6d31. */
+    public static class Highlight {
+        public static final ConfigBoolean ENABLED = bool("highlightEnabled").defaultValue(false).build();
+        public static final ConfigBoolean NEXT_ENABLED = bool("highlightNextEnabled").defaultValue(true).build();
+        public static final ConfigColor PLACE = color("highlightColorPlace").defaultValue("#80FFFFFF").build();
+        public static final ConfigColor ADJUST = color("highlightColorAdjust").defaultValue("#8000FF00").build();
+        public static final ConfigColor BREAK = color("highlightColorBreak").defaultValue("#80FF0000").build();
+        public static final ConfigColor FAILED = color("highlightColorFailed").defaultValue("#80808080").build();
+        public static final ConfigColor NEXT = color("highlightColorNext").defaultValue("#FF00FFFF").build();
+        public static final ConfigOptionList STYLE = optionList("highlightStyle").defaultValue(HighlightStyleType.BOTH).build();
+        public static final ConfigInteger FADE_DURATION = integer("highlightFadeDuration").defaultValue(5).range(1, 100).useSlider(true).build();
+        public static final ConfigBoolean THROUGH_WALLS = bool("highlightThroughWalls").defaultValue(false).build();
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(ENABLED, NEXT_ENABLED, PLACE, ADJUST,
+                BREAK, FAILED, NEXT, STYLE, FADE_DURATION, THROUGH_WALLS);
     }
 
     public static class Core {
@@ -128,16 +145,6 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
                 .range(1, 256)
                 .build();
 
-        public static final ConfigInteger SCAN_TIME_BUDGET_MS = integer("scanTimeBudgetMs")
-                .defaultValue(2)
-                .range(1, 10)
-                .build();
-
-        public static final ConfigInteger LAZY_ENTER_TICKS = integer("lazyEnterTicks")
-                .defaultValue(10)
-                .range(0, 40)
-                .build();
-
         // 核心 - 检查玩家方块交互范围
         public static final ConfigBoolean CHECK_PLAYER_INTERACTION_RANGE = bool("checkPlayerInteractionRange")
                 .defaultValue(true)
@@ -158,6 +165,9 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
         public static final ConfigOptionList ITERATOR_SHAPE = optionList("printerIteratorShape")
                 .defaultValue(RadiusShapeType.SPHERE)
                 .build();
+
+        public static final ConfigInteger WORK_PER_TICK = integer("workPerTick")
+                .defaultValue(2048).range(256, 131072).build();
 
         // 核心 - 显示打印机HUD
         public static final ConfigBoolean RENDER_HUD = bool("renderHud")
@@ -208,8 +218,7 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
                 FLUID,
                 COVER,
                 WORK_RANGE,
-                SCAN_TIME_BUDGET_MS,
-                LAZY_ENTER_TICKS,
+                WORK_PER_TICK,
                 RENDER_HUD,
                 MISSING_MATERIAL_HUD,
                 RENDER_HUD_X,
@@ -351,8 +360,7 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
 
         // Ceiling for how many blocks the mine session may batch-break in one tick. Each candidate
         // is an independent server judgment (delta*(elapsed+1) >= 0.7 on STOP), so START+STOP pairs
-        // can be dispatched to thousands of blocks in one tick. 0 = unlimited. The optional
-        // Tweakeroo durability guard is only active for bounded small sessions.
+        // can be dispatched to thousands of blocks in one tick. 0 = unlimited.
         public static final ConfigInteger BREAK_BLOCKS_PER_TICK = integer("breakBlocksPerTick")
                 .defaultValue(0)
                 .range(0, 1000)
@@ -384,6 +392,11 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
                 .defaultValue(false)
                 .build();
 
+        public static final ConfigInteger BREAK_TOOL_RESERVE = integer("breakToolReserve")
+                .defaultValue(20)
+                .range(0, 1000)
+                .build();
+
         // 模式限制器
         public static final ConfigOptionList BREAK_LIMITER = optionList("breakLimiter")
                 .defaultValue(ExcavateListMode.CUSTOM)
@@ -413,6 +426,7 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
                 BREAK_COOLDOWN,
                 BREAK_CHECK_HARDNESS,
                 BREAK_AUTO_TOOL,
+                BREAK_TOOL_RESERVE,
                 // 限制器
                 BREAK_LIMITER,
                 BREAK_LIMIT,
@@ -824,7 +838,7 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
             JsonElement jsonElement = JsonUtils.parseJsonFile(settingFile);
             if (jsonElement != null && jsonElement.isJsonObject()) {
                 JsonObject obj = jsonElement.getAsJsonObject();
-                ConfigUtils.readConfigBase(obj, Reference.MOD_ID, OPTIONS);
+                boolean performanceMigrated = readOptions(obj);
                 int schemaVersion = obj.has("configSchemaVersion")
                         && obj.get("configSchemaVersion").isJsonPrimitive()
                         && obj.get("configSchemaVersion").getAsJsonPrimitive().isNumber()
@@ -837,9 +851,43 @@ public class Configs extends ConfigBuilders implements IConfigHandler {
                     // persisted compatibility value into a new runtime behavior on upgrade.
                     Break.BREAK_USE_DELAYED_DESTROY.setBooleanValue(false);
                     this.save();
+                } else if (performanceMigrated) {
+                    this.save();
                 }
             }
         }
+    }
+
+    /** Reads saved options while consolidating obsolete performance controls into one workload. */
+    public static boolean readOptions(JsonObject root) {
+        boolean migrated = false;
+        JsonElement section = root.get(Reference.MOD_ID);
+        if (section != null && section.isJsonObject()) {
+            JsonObject values = section.getAsJsonObject();
+            List<String> legacyKeys = List.of("scanTimeBudgetMs", "iterationTimeBudgetMs",
+                    "scanWorkLimitPerTick", "iterationCandidatesPerTick", "scanCacheSizeMiB", "lazyEnterTicks");
+            migrated = legacyKeys.stream().anyMatch(values::has);
+            if (migrated && !values.has("workPerTick")) {
+                long amount = Math.max(legacyPositiveNumber(values, "scanWorkLimitPerTick"),
+                        legacyPositiveNumber(values, "iterationCandidatesPerTick"));
+                if (amount == 0) {
+                    amount = Math.max(legacyPositiveNumber(values, "scanTimeBudgetMs"),
+                            legacyPositiveNumber(values, "iterationTimeBudgetMs")) * 4096L;
+                }
+                values.addProperty("workPerTick", amount == 0 ? Core.WORK_PER_TICK.getDefaultIntegerValue()
+                        : Math.max(256L, Math.min(amount, 131072L)));
+            }
+            legacyKeys.forEach(values::remove);
+        }
+        ConfigUtils.readConfigBase(root, Reference.MOD_ID, OPTIONS);
+        return migrated;
+    }
+
+    private static long legacyPositiveNumber(JsonObject values, String key) {
+        JsonElement value = values.get(key);
+        if (value == null || !value.isJsonPrimitive() || !value.getAsJsonPrimitive().isNumber()) return 0L;
+        double number = value.getAsDouble();
+        return Double.isFinite(number) && number > 0 ? (long) Math.min(number, 131072L) : 0L;
     }
 
     @Override

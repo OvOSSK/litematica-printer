@@ -42,6 +42,7 @@ public abstract class MixinMultiPlayerGameMode implements MultiPlayerGameModeExt
     @Shadow protected abstract boolean sameDestroyTarget(BlockPos pos);
     @Shadow protected abstract void ensureHasSentCarriedItem();
     @Shadow public abstract InteractionResult useItemOn(LocalPlayer player, InteractionHand hand, BlockHitResult hit);
+    @Shadow public abstract InteractionResult useItem(net.minecraft.world.entity.player.Player player, InteractionHand hand);
 
     @Unique
     private MiningInteractionController litematica_printer$controller() {
@@ -95,6 +96,22 @@ public abstract class MixinMultiPlayerGameMode implements MultiPlayerGameModeExt
         return InteractionResult.PASS;
     }
 
+    @Override public InteractionResult litematica_printer$useItem(InteractionHand hand,
+            me.aleksilassila.litematica.printer.printer.PlayerLook look) {
+        LocalPlayer player = this.minecraft.player;
+        if (player == null || look == null) return InteractionResult.FAIL;
+        float yaw = player.getYRot();
+        float pitch = player.getXRot();
+        try {
+            player.setYRot(look.yaw);
+            player.setXRot(look.pitch);
+            return this.useItem(player, hand);
+        } finally {
+            player.setYRot(yaw);
+            player.setXRot(pitch);
+        }
+    }
+
     @Override public Minecraft client() { return this.minecraft; }
     @Override public BlockPos destroyPos() { return this.destroyBlockPos; }
     @Override public void destroyPos(BlockPos pos) { this.destroyBlockPos = pos; }
@@ -109,6 +126,9 @@ public abstract class MixinMultiPlayerGameMode implements MultiPlayerGameModeExt
         return RuntimeAccess.get().inventorySwitchGuard().isWaiting();
     }
     @Override public void ensureCarriedItemSent() { this.ensureHasSentCarriedItem(); }
+    @Override public void onPendingDestroyExpired(BlockPos pos) {
+        RuntimeAccess.get().scanEngine().reoffer("mine", pos);
+    }
 
     @Override
     public ServerboundPlayerActionPacket actionPacket(
