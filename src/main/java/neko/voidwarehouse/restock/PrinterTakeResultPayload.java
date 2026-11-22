@@ -76,4 +76,3 @@ public record PrinterTakeResultPayload(int nonce, int status) implements CustomP
         return TYPE;
     }
 }
-

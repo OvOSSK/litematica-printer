@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(targets = "fi.dy.masa.litematica.event.KeyCallbacks$KeyCallbackHotkeys", remap = false)
 public class MixinSchematicPickHotkeys {
     @WrapOperation(method = "onKeyAction", at = @At(value = "INVOKE",
-            target = "Lfi/dy/masa/litematica/util/WorldUtils;doSchematicWorldPickBlock"), require = 2)
+            target = "Lfi/dy/masa/litematica/util/WorldUtils;doSchematicWorldPickBlock(ZLnet/minecraft/class_310;)Z"), require = 2)
     private boolean litematicaPrinter$userPick(boolean closest, Minecraft client, Operation<Boolean> original) {
         return PickBlockRequestScope.withUserPick(() -> original.call(closest, client));
     }

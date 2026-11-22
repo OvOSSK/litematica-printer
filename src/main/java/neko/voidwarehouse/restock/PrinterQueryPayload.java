@@ -71,4 +71,3 @@ public record PrinterQueryPayload(int nonce, List<String> itemIds) implements Cu
         return TYPE;
     }
 }
-

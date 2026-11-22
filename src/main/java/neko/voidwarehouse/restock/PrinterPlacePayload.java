@@ -68,4 +68,3 @@ public record PrinterPlacePayload(int nonce, List<String> candidates, BlockPos t
         return TYPE;
     }
 }
-

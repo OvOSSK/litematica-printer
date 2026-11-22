@@ -80,4 +80,3 @@ public record PrinterQueryResultPayload(int nonce, int status, List<String> item
         return TYPE;
     }
 }
-

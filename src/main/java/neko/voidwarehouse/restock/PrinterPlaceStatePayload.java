@@ -55,4 +55,3 @@ public record PrinterPlaceStatePayload(PrinterPlacePayload placement, String blo
         return TYPE;
     }
 }
-

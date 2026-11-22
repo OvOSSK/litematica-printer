@@ -1,5 +1,7 @@
 # Litematica Printer — Hana
 
+本次补入上游的仓库缺料回退背包修复，并适配 Neko Client 0.5.9 的共用通信。仍基于 `old` 分支，未合入 `master` 的新界面和挖掘重构。
+
 > **1.20.1 Fabric 版**，由 OvOSSK 移植。基于 [Hana](https://github.com/Yur1Ca/litematica-printer) 的 old 分支，补上虚空仓库联动。
 > 原作者及许可见文末，修改记录见 [PORT-NOTICE.txt](PORT-NOTICE.txt)。
 

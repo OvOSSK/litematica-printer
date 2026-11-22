@@ -7,6 +7,20 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class VoidWarehousePlacementStateTest {
+    @Test void inventoryFallbackWaitsForPendingAndBackoff() {
+        var state = new VoidWarehousePlacementState<String>();
+        enable(state);
+        assertTrue(state.canUseInventoryFallback("a", 0));
+        int request = state.beginRequest(STONE, "a", 0);
+        assertFalse(state.canUseInventoryFallback("a", 0));
+        state.receiveResult(request, 2, 1);
+        assertTrue(state.canUseInventoryFallback("a", 1));
+        int other = state.beginRequest(List.of("minecraft:dirt"), "b", 2);
+        state.receiveResult(other, 4, 2);
+        assertFalse(state.canUseInventoryFallback("a", 3));
+        assertTrue(state.canUseInventoryFallback("a", 23));
+    }
+
     private static final List<String> STONE = List.of("minecraft:stone");
 
     @Test

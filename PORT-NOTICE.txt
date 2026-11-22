@@ -25,3 +25,10 @@ Third-party dependencies retain their respective licenses and notices.
 OvOSSK attribution covers porting and maintenance contributions only.
 It does not replace upstream authorship, claim exclusive ownership of
 upstream code/artwork/names, or imply upstream endorsement.
+
+2026-11-22 update by OvOSSK:
+Backported upstream commit 8707bb1b8cdb3e186d453e5e60a9cb12c5703f51
+(warehouse empty reply falls back to consumable inventory materials).
+Updated shared network codecs for Neko Client 0.5.9 and qualified pick-block
+injection descriptors. The old-branch base is unchanged; this release does
+not include the new master-branch UI or mining redesign.

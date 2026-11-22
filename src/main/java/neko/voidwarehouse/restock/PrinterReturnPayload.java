@@ -69,4 +69,3 @@ public record PrinterReturnPayload(int nonce, List<Integer> slots) implements Cu
         return TYPE;
     }
 }
-

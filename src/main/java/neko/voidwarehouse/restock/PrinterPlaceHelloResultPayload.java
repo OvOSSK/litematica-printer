@@ -27,4 +27,3 @@ public record PrinterPlaceHelloResultPayload(int nonce, boolean enabled) impleme
         return TYPE;
     }
 }
-

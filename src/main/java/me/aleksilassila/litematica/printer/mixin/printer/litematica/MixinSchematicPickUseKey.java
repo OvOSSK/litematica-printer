@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class MixinSchematicPickUseKey {
     // Litematica also allows PICK_BLOCK_LAST to be explicitly bound to the use key.
     @WrapOperation(method = "handleUseKey", at = @At(value = "INVOKE",
-            target = "Lfi/dy/masa/litematica/util/WorldUtils;doSchematicWorldPickBlock"))
+            target = "Lfi/dy/masa/litematica/util/WorldUtils;doSchematicWorldPickBlock(ZLnet/minecraft/class_310;)Z"))
     private boolean litematicaPrinter$userPick(boolean closest, Minecraft client, Operation<Boolean> original) {
         return PickBlockRequestScope.withUserPick(() -> original.call(closest, client));
     }

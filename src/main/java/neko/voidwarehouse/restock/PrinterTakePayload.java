@@ -94,4 +94,3 @@ public record PrinterTakePayload(int nonce, List<String> candidates) implements 
         return TYPE;
     }
 }
-

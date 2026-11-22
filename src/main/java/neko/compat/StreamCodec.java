@@ -1,6 +1,7 @@
 package neko.compat;
 import java.util.function.Function;
 public interface StreamCodec<B,T> {
+ static <B,T> StreamCodec<B,T> unit(T value) { return new StreamCodec<>() { public T decode(B buf) { return value; } public void encode(B buf,T v) {} }; }
  T decode(B buf);
  void encode(B buf,T value);
  interface Constructor1<A0,T> { T apply(A0 a0); }

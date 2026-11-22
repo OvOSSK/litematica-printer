@@ -34,4 +34,3 @@ public record PrinterPlaceResultPayload(int nonce, int status) implements Custom
         return TYPE;
     }
 }
-

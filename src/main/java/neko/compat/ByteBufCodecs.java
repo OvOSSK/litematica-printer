@@ -4,6 +4,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import java.util.*;
 import java.util.function.Function;
 public final class ByteBufCodecs {
+ public static final StreamCodec<ByteBuf,Boolean> BOOL = new StreamCodec<>() { public Boolean decode(ByteBuf b) { return b.readBoolean(); } public void encode(ByteBuf b,Boolean v) { b.writeBoolean(v); }};
  public static final StreamCodec<ByteBuf,Integer> VAR_INT = new StreamCodec<>() {
  public Integer decode(ByteBuf b) { return new FriendlyByteBuf(b).readVarInt(); }
  public void encode(ByteBuf b,Integer v) { new FriendlyByteBuf(b).writeVarInt(v); }};

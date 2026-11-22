@@ -71,4 +71,3 @@ public record PrinterReturnResultPayload(int nonce, int status, int returned) im
         return TYPE;
     }
 }
-

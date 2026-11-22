@@ -1,0 +1,29 @@
+2026-11-22 / Minecraft 1.20.1 Fabric
+
+JDK 17, Gradle 8.5, Fabric Loom 1.5.8.
+Build and 51 JUnit tests passed.
+Main: legacy recipe NBT migration, inventory persistence, filtered empty results,
+filled-container material costs, decorated-container rejection, packet codecs.
+Client: Chinese/pinyin search, legacy container NBT and entity NBT preservation.
+Printer: warehouse request bookkeeping, pending/backoff inventory fallback.
+
+Runtime checks:
+- Neko Client starts without Litematica installed.
+- Main mod dedicated server reaches Done on localhost.
+- Production JARs of all three mods load together with Fabric Loader 0.20.1,
+  Fabric API 0.92.12, MaLiLib 0.16.3, Litematica 0.15.4, Tweakeroo 0.17.1.
+- A COPY of the existing test world loads and saves normally.
+- Neko Client configuration screen and hotkeys open correctly.
+- Warehouse hotkey opens the menu; search with no matches hides stock;
+  clearing the input restores stock (combined development run).
+- Recipe browser opens in production; after enabling voidWarehouseCraft,
+  the server returns its empty recipe index and page.
+- No mod exception in the final production run. Existing schematic wall-state
+  warnings are present. The user's original world was not changed.
+
+Limits:
+Full recipe learning/deletion UI, automated projection filling, large schematics
+and remote multiplayer were not exhaustively exercised in this update.
+A development-only remapping collision in MaLiLib's text field caused recursive
+cursor calls; the same recipe screen works with the final production JARs.
+Hana remains based on old; master UI/mining redesign is not part of this release.

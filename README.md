@@ -1,5 +1,7 @@
 # Litematica Printer — Hana
 
+This update backports the warehouse inventory fallback fix and shares compatible networking with Neko Client 0.5.9. The base remains `old`; the new `master` UI and mining redesign are not included.
+
 > **1.20.1 Fabric port by OvOSSK.** Based on [Hana](https://github.com/Yur1Ca/litematica-printer)'s old branch, with Void Warehouse support backported.
 > See [PORT-NOTICE.txt](PORT-NOTICE.txt) for changes. Original credits and license are below.
 
